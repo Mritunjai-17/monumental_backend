@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monumental Energy Corp. | CMS Portal</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="shortcut icon" href="/favicon.ico">
+  
+  <!-- Fonts matching Monumental frontend -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#0B1F2A',
+              secondary: '#1F6F78',
+              cta: '#B7E34A',
+              ctaHover: '#A3CF36',
+              bg: '#F5F6F1',
+              surface: '#FFFFFF',
+              border: '#DDE3E3',
+              darkBorder: '#1D3B4C',
+              darkBg: '#0E2836',
+              text: '#16232B',
+              muted: '#5B6B73'
+            }
+          },
+          fontFamily: {
+            heading: ['"Space Grotesk"', 'sans-serif'],
+            body: ['"Inter"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F5F6F1;
+      color: #16232B;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+  </style>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen flex flex-col bg-[#F5F6F1]">
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm"></div>
+
+  <!-- Main Wrapper -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-[#0B1F2A] border-r border-[#1D3B4C] flex flex-col shrink-0 text-white transition-all duration-300 z-30">
+      <!-- Logo Header -->
+      <div class="h-18 px-5 py-4 border-b border-[#1D3B4C] flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3 group">
+          <img src="/images/logo.png" alt="Monumental Energy" class="h-8 w-auto object-contain" onerror="this.src='/favicon.svg'; this.className='w-8 h-8 rounded-lg p-1 bg-[#0E2836]'">
+        </a>
+      </div>
+
+      <!-- Ticker & Environment Info -->
+      <div class="px-5 py-3 border-b border-[#1D3B4C] bg-[#081720]/60 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-[#B7E34A] animate-pulse"></span>
+          <span class="font-mono text-[#B7E34A] font-bold">TSX-V: MNRG</span>
+        </div>
+        <span class="text-xs text-slate-400 font-mono">CMS v1.0</span>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+        <button onclick="navigateTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-[#B7E34A] bg-[#0E2836]">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </button>
+
+        <button onclick="navigateTab('inquiries')" id="nav-inquiries" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-[#0E2836]">
+          <div class="flex items-center gap-3">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+            <span>Investor Inquiries</span>
+          </div>
+          <span id="badge-inquiries-count" class="px-2 py-0.5 rounded-full text-xs font-bold bg-[#B7E34A] text-[#0B1F2A]">0</span>
+        </button>
+
+        <button onclick="navigateTab('subscribers')" id="nav-subscribers" class="nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-[#0E2836]">
+          <div class="flex items-center gap-3">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span>News Subscribers</span>
+          </div>
+          <span id="badge-subscribers-count" class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-700 text-slate-300">0</span>
+        </button>
+
+        <button onclick="navigateTab('projects')" id="nav-projects" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-[#0E2836]">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Energy Projects</span>
+        </button>
+
+        <button onclick="navigateTab('news')" id="nav-news" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-[#0E2836]">
+          <i data-lucide="newspaper" class="w-4 h-4"></i>
+          <span>Press Releases</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="p-4 border-t border-[#1D3B4C] bg-[#081720]/70 text-xs">
+        <a href="http://localhost:3000" target="_blank" class="flex items-center justify-between px-3 py-2 rounded-lg bg-[#0E2836] hover:bg-[#153a4e] text-slate-200 transition-colors mb-3">
+          <span class="flex items-center gap-2">
+            <i data-lucide="external-link" class="w-3.5 h-3.5 text-[#B7E34A]"></i>
+            <span>Visit Live Website</span>
+          </span>
+          <span class="text-[10px] text-slate-400">:3000</span>
+        </a>
+        <div class="flex items-center justify-between text-slate-400">
+          <span>Vancouver, BC</span>
+          <span class="text-[#B7E34A]">Connected</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar">
+      
+      <!-- Top Bar -->
+      <header class="h-16 bg-white border-b border-[#DDE3E3] px-6 flex items-center justify-between shrink-0 shadow-sm">
+        <div class="flex items-center gap-3">
+          <h2 id="page-title" class="text-xl font-bold font-heading text-[#0B1F2A]">Dashboard Overview</h2>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Seed Data Button -->
+          <button onclick="seedInitialData()" class="px-3 py-1.5 rounded-lg border border-[#DDE3E3] text-xs font-medium text-[#1F6F78] hover:bg-[#F5F6F1] flex items-center gap-1.5 transition">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#B7E34A]"></i>
+            <span>Seed Sample Data</span>
+          </button>
+
+          <!-- Refresh Data Button -->
+          <button onclick="refreshCurrentTab()" class="p-2 rounded-lg border border-[#DDE3E3] text-[#5B6B73] hover:text-[#0B1F2A] hover:bg-[#F5F6F1] transition">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </button>
+
+          <!-- Admin Profile Badge -->
+          <div class="flex items-center gap-2 pl-3 border-l border-[#DDE3E3]">
+            <div class="w-8 h-8 rounded-full bg-[#0B1F2A] text-[#B7E34A] flex items-center justify-center font-bold text-xs">
+              M
+            </div>
+            <div class="text-left hidden sm:block">
+              <div class="text-xs font-semibold text-[#0B1F2A]">Corporate Admin</div>
+              <div class="text-[10px] text-[#5B6B73]">IR & Management</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Container -->
+      <div class="p-6 md:p-8 flex-1 max-w-7xl w-full mx-auto">
+        
+        <!-- ======================= TAB: DASHBOARD ======================= -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Stat 1 -->
+            <div class="bg-white rounded-2xl p-5 border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)]">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-[#5B6B73] uppercase tracking-wider">Investor Inquiries</span>
+                <div class="w-9 h-9 rounded-xl bg-[#1F6F78]/10 text-[#1F6F78] flex items-center justify-center">
+                  <i data-lucide="mail" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span id="stat-total-inquiries" class="text-3xl font-bold font-heading text-[#0B1F2A]">0</span>
+                <span id="stat-new-inquiries" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#B7E34A]/30 text-[#0B1F2A]">0 New</span>
+              </div>
+              <p class="text-xs text-[#5B6B73] mt-2">Incoming leads & shareholder inquiries</p>
+            </div>
+
+            <!-- Stat 2 -->
+            <div class="bg-white rounded-2xl p-5 border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)]">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-[#5B6B73] uppercase tracking-wider">Newsletter Subscribers</span>
+                <div class="w-9 h-9 rounded-xl bg-[#B7E34A]/20 text-[#0B1F2A] flex items-center justify-center">
+                  <i data-lucide="bell" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span id="stat-total-subscribers" class="text-3xl font-bold font-heading text-[#0B1F2A]">0</span>
+                <span class="text-xs text-[#1F6F78] font-medium">News Alerts</span>
+              </div>
+              <p class="text-xs text-[#5B6B73] mt-2">Registered for press releases</p>
+            </div>
+
+            <!-- Stat 3 -->
+            <div class="bg-white rounded-2xl p-5 border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)]">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-[#5B6B73] uppercase tracking-wider">Active Assets</span>
+                <div class="w-9 h-9 rounded-xl bg-[#0B1F2A]/10 text-[#0B1F2A] flex items-center justify-center">
+                  <i data-lucide="layers" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span id="stat-total-projects" class="text-3xl font-bold font-heading text-[#0B1F2A]">2</span>
+                <span class="text-xs text-[#1F6F78] font-medium">Taranaki & Turi</span>
+              </div>
+              <p class="text-xs text-[#5B6B73] mt-2">Oil & Gas and Lithium Brine</p>
+            </div>
+
+            <!-- Stat 4 -->
+            <div class="bg-white rounded-2xl p-5 border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)]">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-semibold text-[#5B6B73] uppercase tracking-wider">TSX-V Filings</span>
+                <div class="w-9 h-9 rounded-xl bg-[#1F6F78]/10 text-[#1F6F78] flex items-center justify-center">
+                  <i data-lucide="newspaper" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span id="stat-total-news" class="text-3xl font-bold font-heading text-[#0B1F2A]">0</span>
+                <span class="text-xs text-emerald-600 font-medium">Regulatory</span>
+              </div>
+              <p class="text-xs text-[#5B6B73] mt-2">Published news releases</p>
+            </div>
+          </div>
+
+          <!-- Recent Inquiries & Subscribers Row -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Recent Inquiries Table (2 cols) -->
+            <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)]">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-lg font-bold font-heading text-[#0B1F2A]">Recent Investor Inquiries</h3>
+                  <p class="text-xs text-[#5B6B73]">Submissions from website contact form</p>
+                </div>
+                <button onclick="navigateTab('inquiries')" class="text-xs font-semibold text-[#1F6F78] hover:text-[#0B1F2A] flex items-center gap-1">
+                  <span>View All</span>
+                  <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                  <thead class="text-xs text-[#5B6B73] uppercase border-b border-[#DDE3E3] bg-[#F5F6F1]">
+                    <tr>
+                      <th class="px-4 py-3 font-semibold">Investor / Contact</th>
+                      <th class="px-4 py-3 font-semibold">Role</th>
+                      <th class="px-4 py-3 font-semibold">Status</th>
+                      <th class="px-4 py-3 font-semibold">Date</th>
+                      <th class="px-4 py-3 font-semibold text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboard-recent-inquiries-body" class="divide-y divide-[#DDE3E3]">
+                    <tr>
+                      <td colspan="5" class="px-4 py-8 text-center text-[#5B6B73]">No inquiries recorded yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Recent Subscribers Card (1 col) -->
+            <div class="bg-white rounded-2xl p-6 border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)]">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-lg font-bold font-heading text-[#0B1F2A]">Latest Subscribers</h3>
+                  <p class="text-xs text-[#5B6B73]">Newsletter & News alerts</p>
+                </div>
+                <button onclick="navigateTab('subscribers')" class="text-xs font-semibold text-[#1F6F78] hover:text-[#0B1F2A] flex items-center gap-1">
+                  <span>View All</span>
+                  <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <div id="dashboard-recent-subscribers-list" class="space-y-3">
+                <p class="text-center text-[#5B6B73] text-sm py-8">No subscribers yet.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================= TAB: INQUIRIES ======================= -->
+        <section id="tab-inquiries" class="tab-content hidden space-y-4">
+          <!-- Filter & Search Toolbar -->
+          <div class="bg-white rounded-2xl p-4 border border-[#DDE3E3] shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
+            <div class="flex flex-1 items-center gap-2 w-full md:w-auto">
+              <div class="relative flex-1">
+                <i data-lucide="search" class="w-4 h-4 text-[#5B6B73] absolute left-3.5 top-3"></i>
+                <input id="inquiry-search-input" oninput="filterInquiries()" type="text" placeholder="Search by name, email, role, or message..." class="w-full pl-10 pr-4 py-2 border border-[#DDE3E3] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 w-full md:w-auto">
+              <!-- Role filter -->
+              <select id="inquiry-role-filter" onchange="filterInquiries()" class="px-3 py-2 border border-[#DDE3E3] rounded-xl text-sm bg-white text-[#16232B] focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+                <option value="All">All Shareholder Roles</option>
+                <option value="Prospective Investor">Prospective Investor</option>
+                <option value="Current Shareholder">Current Shareholder</option>
+                <option value="Investment Advisor">Investment Advisor / Broker</option>
+                <option value="Financial Analyst">Financial Analyst / Research</option>
+                <option value="Media / Press">Media / Press</option>
+                <option value="Other Inquiry">General / Other</option>
+              </select>
+
+              <!-- Status filter -->
+              <select id="inquiry-status-filter" onchange="filterInquiries()" class="px-3 py-2 border border-[#DDE3E3] rounded-xl text-sm bg-white text-[#16232B] focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+                <option value="All">All Statuses</option>
+                <option value="New">New</option>
+                <option value="Contacted">Contacted</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Table Container -->
+          <div class="bg-white rounded-2xl border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)] overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="text-xs text-[#5B6B73] uppercase border-b border-[#DDE3E3] bg-[#F5F6F1]">
+                  <tr>
+                    <th class="px-5 py-3.5 font-semibold">ID / Date</th>
+                    <th class="px-5 py-3.5 font-semibold">Full Name</th>
+                    <th class="px-5 py-3.5 font-semibold">Role</th>
+                    <th class="px-5 py-3.5 font-semibold">Contact Info</th>
+                    <th class="px-5 py-3.5 font-semibold">Status</th>
+                    <th class="px-5 py-3.5 font-semibold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inquiries-table-body" class="divide-y divide-[#DDE3E3]">
+                  <!-- Populated via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================= TAB: SUBSCRIBERS ======================= -->
+        <section id="tab-subscribers" class="tab-content hidden space-y-4">
+          <!-- Toolbar -->
+          <div class="bg-white rounded-2xl p-4 border border-[#DDE3E3] shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
+            <div class="relative flex-1 w-full sm:w-auto max-w-md">
+              <i data-lucide="search" class="w-4 h-4 text-[#5B6B73] absolute left-3.5 top-3"></i>
+              <input id="subscriber-search-input" oninput="filterSubscribers()" type="text" placeholder="Search by email..." class="w-full pl-10 pr-4 py-2 border border-[#DDE3E3] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button onclick="exportSubscribersCSV()" class="px-3.5 py-2 rounded-xl border border-[#DDE3E3] text-sm font-medium text-[#1F6F78] hover:bg-[#F5F6F1] flex items-center gap-1.5 transition">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span>Export CSV</span>
+              </button>
+
+              <button onclick="openAddSubscriberModal()" class="px-4 py-2 rounded-xl bg-[#0B1F2A] hover:bg-[#153a4e] text-[#B7E34A] text-sm font-semibold flex items-center gap-1.5 transition shadow">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Add Subscriber</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subscribers Table -->
+          <div class="bg-white rounded-2xl border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)] overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="text-xs text-[#5B6B73] uppercase border-b border-[#DDE3E3] bg-[#F5F6F1]">
+                  <tr>
+                    <th class="px-5 py-3.5 font-semibold">Subscriber ID</th>
+                    <th class="px-5 py-3.5 font-semibold">Email Address</th>
+                    <th class="px-5 py-3.5 font-semibold">Source</th>
+                    <th class="px-5 py-3.5 font-semibold">Status</th>
+                    <th class="px-5 py-3.5 font-semibold">Joined At</th>
+                    <th class="px-5 py-3.5 font-semibold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="subscribers-table-body" class="divide-y divide-[#DDE3E3]">
+                  <!-- Populated via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================= TAB: PROJECTS ======================= -->
+        <section id="tab-projects" class="tab-content hidden space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold font-heading text-[#0B1F2A]">Resource Projects</h3>
+              <p class="text-xs text-[#5B6B73]">Manage energy & critical mineral exploration projects</p>
+            </div>
+            <button onclick="openAddProjectModal()" class="px-4 py-2 rounded-xl bg-[#0B1F2A] hover:bg-[#153a4e] text-[#B7E34A] text-sm font-semibold flex items-center gap-1.5 transition shadow">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Add Project</span>
+            </button>
+          </div>
+
+          <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Populated via JavaScript -->
+          </div>
+        </section>
+
+        <!-- ======================= TAB: NEWS ======================= -->
+        <section id="tab-news" class="tab-content hidden space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold font-heading text-[#0B1F2A]">Press Releases & Filings</h3>
+              <p class="text-xs text-[#5B6B73]">Official TSX-V regulatory news and corporate updates</p>
+            </div>
+            <button onclick="openAddNewsModal()" class="px-4 py-2 rounded-xl bg-[#0B1F2A] hover:bg-[#153a4e] text-[#B7E34A] text-sm font-semibold flex items-center gap-1.5 transition shadow">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>Publish News</span>
+            </button>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-[#DDE3E3] shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="text-xs text-[#5B6B73] uppercase border-b border-[#DDE3E3] bg-[#F5F6F1]">
+                  <tr>
+                    <th class="px-5 py-3.5 font-semibold">Date</th>
+                    <th class="px-5 py-3.5 font-semibold">Title / Headline</th>
+                    <th class="px-5 py-3.5 font-semibold">Category</th>
+                    <th class="px-5 py-3.5 font-semibold">Status</th>
+                    <th class="px-5 py-3.5 font-semibold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="news-table-body" class="divide-y divide-[#DDE3E3]">
+                  <!-- Populated via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ======================= MODAL: INQUIRY DETAILS ======================= -->
+  <div id="inquiry-detail-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-[#DDE3E3] max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-[#DDE3E3]">
+        <div>
+          <span id="modal-inquiry-role-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1F6F78]/15 text-[#1F6F78]">Role</span>
+          <h3 id="modal-inquiry-name" class="text-xl font-bold font-heading text-[#0B1F2A] mt-1.5">Investor Name</h3>
+        </div>
+        <button onclick="closeInquiryModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="py-4 space-y-4 flex-1 overflow-y-auto custom-scrollbar text-sm">
+        <div class="grid grid-cols-2 gap-3 bg-[#F5F6F1] p-3.5 rounded-xl border border-[#DDE3E3]">
+          <div>
+            <span class="text-xs text-[#5B6B73] block">Email</span>
+            <a id="modal-inquiry-email" href="#" class="font-medium text-[#1F6F78] hover:underline">email@example.com</a>
+          </div>
+          <div>
+            <span class="text-xs text-[#5B6B73] block">Phone</span>
+            <span id="modal-inquiry-phone" class="font-medium text-[#0B1F2A]">-</span>
+          </div>
+          <div>
+            <span class="text-xs text-[#5B6B73] block">Submission Date</span>
+            <span id="modal-inquiry-date" class="font-medium text-[#0B1F2A]">-</span>
+          </div>
+          <div>
+            <span class="text-xs text-[#5B6B73] block">Inquiry ID</span>
+            <span id="modal-inquiry-id" class="font-mono text-xs text-[#0B1F2A]">-</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-xs font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">Message Content</span>
+          <div id="modal-inquiry-message" class="p-4 bg-white rounded-xl border border-[#DDE3E3] text-[#16232B] whitespace-pre-wrap leading-relaxed">
+            Message text...
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">Update Status</label>
+          <select id="modal-inquiry-status-select" class="w-full px-3 py-2 border border-[#DDE3E3] rounded-xl text-sm focus:ring-2 focus:ring-[#1F6F78]">
+            <option value="New">New</option>
+            <option value="Contacted">Contacted</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">Internal IR Notes</label>
+          <textarea id="modal-inquiry-notes" rows="3" placeholder="Add confidential internal notes regarding this investor..." class="w-full px-3 py-2 border border-[#DDE3E3] rounded-xl text-sm focus:ring-2 focus:ring-[#1F6F78]"></textarea>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-[#DDE3E3] flex items-center justify-between">
+        <button id="modal-inquiry-delete-btn" class="px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-xl transition">
+          Delete Inquiry
+        </button>
+        <div class="flex items-center gap-2">
+          <a id="modal-inquiry-mailto" href="#" class="px-4 py-2 border border-[#DDE3E3] text-[#0B1F2A] text-xs font-semibold rounded-xl hover:bg-[#F5F6F1] flex items-center gap-1.5 transition">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>Reply via Email</span>
+          </a>
+          <button id="modal-inquiry-save-btn" class="px-4 py-2 bg-[#0B1F2A] text-[#B7E34A] text-xs font-semibold rounded-xl hover:bg-[#153a4e] transition">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= MODAL: ADD SUBSCRIBER ======================= -->
+  <div id="add-subscriber-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#DDE3E3]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#DDE3E3] mb-4">
+        <h3 class="text-lg font-bold font-heading text-[#0B1F2A]">Add News Subscriber</h3>
+        <button onclick="closeAddSubscriberModal()" class="text-slate-400 hover:text-slate-700">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleAddSubscriber(event)" class="space-y-4">
+        <div>
+          <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Email Address</label>
+          <input id="add-subscriber-email" type="email" required placeholder="investor@fund.com" class="w-full px-3.5 py-2.5 border border-[#DDE3E3] rounded-xl text-sm focus:ring-2 focus:ring-[#1F6F78]">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Source Tag</label>
+          <input id="add-subscriber-source" type="text" value="CMS Manual Entry" class="w-full px-3.5 py-2.5 border border-[#DDE3E3] rounded-xl text-sm focus:ring-2 focus:ring-[#1F6F78]">
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeAddSubscriberModal()" class="px-4 py-2 border border-[#DDE3E3] rounded-xl text-xs font-semibold hover:bg-slate-50">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-[#0B1F2A] text-[#B7E34A] rounded-xl text-xs font-semibold hover:bg-[#153a4e]">Subscribe</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================= MODAL: ADD PROJECT ======================= -->
+  <div id="add-project-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#DDE3E3] max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div class="flex items-center justify-between pb-3 border-b border-[#DDE3E3] mb-4">
+        <h3 class="text-lg font-bold font-heading text-[#0B1F2A]">Add Energy Project</h3>
+        <button onclick="closeAddProjectModal()" class="text-slate-400 hover:text-slate-700">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleAddProject(event)" class="space-y-3.5 text-sm">
+        <div>
+          <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Project Title</label>
+          <input id="proj-title" type="text" required placeholder="e.g. Taranaki Basin Project" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm focus:ring-2 focus:ring-[#1F6F78]">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Commodity Focus</label>
+            <select id="proj-commodity" class="w-full px-3 py-2 border border-[#DDE3E3] rounded-xl text-sm">
+              <option value="Oil & Gas">Oil & Gas</option>
+              <option value="Lithium Brine">Lithium Brine</option>
+              <option value="Critical Minerals">Critical Minerals</option>
+              <option value="Clean Tech">Clean Tech</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Country</label>
+            <input id="proj-country" type="text" required placeholder="e.g. New Zealand / Chile" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Specific Location</label>
+            <input id="proj-location" type="text" required placeholder="e.g. Taranaki Peninsula" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Stage</label>
+            <select id="proj-stage" class="w-full px-3 py-2 border border-[#DDE3E3] rounded-xl text-sm">
+              <option value="Exploration">Exploration</option>
+              <option value="Development">Development</option>
+              <option value="Workover">Workover</option>
+              <option value="Production">Production</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Short Summary</label>
+          <textarea id="proj-summary" rows="2" placeholder="Brief project positioning for investors..." class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm"></textarea>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Key Highlights (Comma separated)</label>
+          <input id="proj-highlights" type="text" placeholder="100% Interest, Near-term Cash Flow, Drill-Ready" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm">
+        </div>
+
+        <div class="flex items-center gap-4 pt-1">
+          <label class="flex items-center gap-2 cursor-pointer text-xs font-medium">
+            <input id="proj-featured" type="checkbox" class="rounded text-[#1F6F78]">
+            <span>Featured on Homepage</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer text-xs font-medium">
+            <input id="proj-active" type="checkbox" checked class="rounded text-[#1F6F78]">
+            <span>Active Asset</span>
+          </label>
+        </div>
+
+        <div class="pt-3 border-t border-[#DDE3E3] flex justify-end gap-2">
+          <button type="button" onclick="closeAddProjectModal()" class="px-4 py-2 border border-[#DDE3E3] rounded-xl text-xs font-semibold">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-[#0B1F2A] text-[#B7E34A] rounded-xl text-xs font-semibold hover:bg-[#153a4e]">Save Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ======================= JAVASCRIPT APP LOGIC ======================= -->
+  <script>
+    // State Store
+    const state = {
+      currentTab: 'dashboard',
+      inquiries: [],
+      subscribers: [],
+      projects: [],
+      news: [],
+      selectedInquiry: null
+    };
+
+    // Initialize Icons
+    function refreshIcons() {
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // Toast Notifications
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bg = type === 'success' ? 'bg-[#0B1F2A] text-[#B7E34A] border-[#1F6F78]' : 'bg-red-900 text-white border-red-700';
+      toast.className = `${bg} px-4 py-3 rounded-xl border shadow-xl flex items-center justify-between gap-3 text-sm transition-all duration-300 transform translate-y-2 opacity-0`;
+      toast.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full ${type === 'success' ? 'bg-[#B7E34A]' : 'bg-red-400'}"></span>
+          <span>${message}</span>
+        </div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Tab Navigation
+    function navigateTab(tabName) {
+      state.currentTab = tabName;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.remove('text-[#B7E34A]', 'bg-[#0E2836]');
+        el.classList.add('text-slate-300');
+      });
+
+      const activeSection = document.getElementById(`tab-${tabName}`);
+      const activeNav = document.getElementById(`nav-${tabName}`);
+      if (activeSection) activeSection.classList.remove('hidden');
+      if (activeNav) {
+        activeNav.classList.add('text-[#B7E34A]', 'bg-[#0E2836]');
+        activeNav.classList.remove('text-slate-300');
+      }
+
+      const titles = {
+        dashboard: 'Dashboard Overview',
+        inquiries: 'Investor Inquiries & Contact Leads',
+        subscribers: 'News & Press Release Subscribers',
+        projects: 'Energy Projects & Assets Management',
+        news: 'Press Releases & Regulatory News'
+      };
+      document.getElementById('page-title').innerText = titles[tabName] || 'CMS Dashboard';
+
+      refreshCurrentTab();
+      refreshIcons();
+    }
+
+    // Refresh Current Tab
+    async function refreshCurrentTab() {
+      await fetchAllData();
+      renderDashboard();
+      renderInquiries();
+      renderSubscribers();
+      renderProjects();
+      renderNews();
+      refreshIcons();
+    }
+
+    // Fetch API Data with Local Fallback
+    async function fetchAllData() {
+      try {
+        const [inqRes, subRes, projRes, newsRes] = await Promise.all([
+          fetch('/api/v1/enquiries').catch(() => null),
+          fetch('/api/v1/subscribers').catch(() => null),
+          fetch('/api/v1/projects').catch(() => null),
+          fetch('/api/v1/news').catch(() => null)
+        ]);
+
+        if (inqRes && inqRes.ok) {
+          const data = await inqRes.json();
+          state.inquiries = data.data || [];
+        }
+        if (subRes && subRes.ok) {
+          const data = await subRes.json();
+          state.subscribers = data.data || [];
+        }
+        if (projRes && projRes.ok) {
+          const data = await projRes.json();
+          state.projects = data.data || [];
+        }
+        if (newsRes && newsRes.ok) {
+          const data = await newsRes.json();
+          state.news = data.data || [];
+        }
+      } catch (e) {
+        console.warn('API sync warning:', e);
+      }
+
+      // Update counters
+      const newInquiries = state.inquiries.filter(i => i.status === 'New').length;
+      document.getElementById('badge-inquiries-count').innerText = newInquiries;
+      document.getElementById('badge-subscribers-count').innerText = state.subscribers.length;
+    }
+
+    // Render Dashboard
+    function renderDashboard() {
+      const newInquiries = state.inquiries.filter(i => i.status === 'New').length;
+      document.getElementById('stat-total-inquiries').innerText = state.inquiries.length;
+      document.getElementById('stat-new-inquiries').innerText = `${newInquiries} New`;
+      document.getElementById('stat-total-subscribers').innerText = state.subscribers.length;
+      document.getElementById('stat-total-projects').innerText = state.projects.length;
+      document.getElementById('stat-total-news').innerText = state.news.length;
+
+      // Recent inquiries table
+      const tbody = document.getElementById('dashboard-recent-inquiries-body');
+      if (state.inquiries.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-[#5B6B73]">No inquiries received yet. Click "Seed Sample Data" to load demo data.</td></tr>`;
+      } else {
+        tbody.innerHTML = state.inquiries.slice(0, 5).map(inq => `
+          <tr class="hover:bg-[#F5F6F1]/60 transition-colors">
+            <td class="px-4 py-3 font-medium text-[#0B1F2A]">
+              <div>${escapeHtml(inq.name)}</div>
+              <div class="text-xs text-[#5B6B73] font-normal">${escapeHtml(inq.email)}</div>
+            </td>
+            <td class="px-4 py-3">
+              <span class="px-2 py-0.5 rounded text-xs font-semibold bg-[#1F6F78]/15 text-[#1F6F78]">${escapeHtml(inq.role || 'Prospective Investor')}</span>
+            </td>
+            <td class="px-4 py-3">
+              <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${getStatusBadgeClass(inq.status)}">${escapeHtml(inq.status || 'New')}</span>
+            </td>
+            <td class="px-4 py-3 text-xs text-[#5B6B73]">
+              ${formatDate(inq.createdAt)}
+            </td>
+            <td class="px-4 py-3 text-right">
+              <button onclick="viewInquiryDetail('${inq._id}')" class="text-xs font-semibold text-[#1F6F78] hover:text-[#0B1F2A] hover:underline">
+                View
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // Recent subscribers
+      const subList = document.getElementById('dashboard-recent-subscribers-list');
+      if (state.subscribers.length === 0) {
+        subList.innerHTML = `<p class="text-center text-[#5B6B73] text-sm py-8">No subscribers yet.</p>`;
+      } else {
+        subList.innerHTML = state.subscribers.slice(0, 5).map(sub => `
+          <div class="flex items-center justify-between p-3 rounded-xl bg-[#F5F6F1] border border-[#DDE3E3]/70">
+            <div class="min-w-0 pr-2">
+              <div class="text-sm font-semibold text-[#0B1F2A] truncate">${escapeHtml(sub.email)}</div>
+              <div class="text-[11px] text-[#5B6B73]">${formatDate(sub.subscribedAt || sub.createdAt)}</div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sub.status === 'Active' ? 'bg-[#B7E34A]/40 text-[#0B1F2A]' : 'bg-slate-200 text-slate-700'}">${sub.status}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Render Inquiries Tab
+    function renderInquiries() {
+      filterInquiries();
+    }
+
+    function filterInquiries() {
+      const search = (document.getElementById('inquiry-search-input')?.value || '').toLowerCase().trim();
+      const roleFilter = document.getElementById('inquiry-role-filter')?.value || 'All';
+      const statusFilter = document.getElementById('inquiry-status-filter')?.value || 'All';
+
+      const filtered = state.inquiries.filter(i => {
+        const matchesRole = roleFilter === 'All' || i.role === roleFilter;
+        const matchesStatus = statusFilter === 'All' || (i.status || '').toLowerCase() === statusFilter.toLowerCase();
+        const matchesSearch = !search || 
+          (i.name || '').toLowerCase().includes(search) || 
+          (i.email || '').toLowerCase().includes(search) || 
+          (i.phone || '').toLowerCase().includes(search) || 
+          (i.message || '').toLowerCase().includes(search) || 
+          (i.enquiryId || '').toLowerCase().includes(search);
+        return matchesRole && matchesStatus && matchesSearch;
+      });
+
+      const tbody = document.getElementById('inquiries-table-body');
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="px-5 py-12 text-center text-[#5B6B73]">No investor inquiries match your criteria.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(inq => `
+        <tr class="hover:bg-[#F5F6F1]/60 transition-colors">
+          <td class="px-5 py-3.5">
+            <span class="font-mono text-xs font-semibold text-[#0B1F2A] block">${escapeHtml(inq.enquiryId || 'INQ')}</span>
+            <span class="text-[11px] text-[#5B6B73]">${formatDate(inq.createdAt)}</span>
+          </td>
+          <td class="px-5 py-3.5">
+            <span class="font-semibold text-[#0B1F2A] block">${escapeHtml(inq.name)}</span>
+          </td>
+          <td class="px-5 py-3.5">
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1F6F78]/15 text-[#1F6F78]">${escapeHtml(inq.role || 'Prospective Investor')}</span>
+          </td>
+          <td class="px-5 py-3.5 text-xs">
+            <a href="mailto:${escapeHtml(inq.email)}" class="text-[#1F6F78] hover:underline block font-medium">${escapeHtml(inq.email)}</a>
+            <span class="text-[#5B6B73]">${escapeHtml(inq.phone || 'No phone provided')}</span>
+          </td>
+          <td class="px-5 py-3.5">
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusBadgeClass(inq.status)}">${escapeHtml(inq.status || 'New')}</span>
+          </td>
+          <td class="px-5 py-3.5 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button onclick="viewInquiryDetail('${inq._id}')" class="px-3 py-1.5 rounded-lg border border-[#DDE3E3] text-xs font-semibold text-[#0B1F2A] hover:bg-slate-100 transition">
+                Inspect
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Render Subscribers Tab
+    function renderSubscribers() {
+      filterSubscribers();
+    }
+
+    function filterSubscribers() {
+      const search = (document.getElementById('subscriber-search-input')?.value || '').toLowerCase().trim();
+      const filtered = state.subscribers.filter(s => {
+        return !search || (s.email || '').toLowerCase().includes(search) || (s.subscriberId || '').toLowerCase().includes(search);
+      });
+
+      const tbody = document.getElementById('subscribers-table-body');
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="px-5 py-12 text-center text-[#5B6B73]">No subscribers found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(sub => `
+        <tr class="hover:bg-[#F5F6F1]/60 transition-colors">
+          <td class="px-5 py-3.5 font-mono text-xs text-[#0B1F2A] font-semibold">${escapeHtml(sub.subscriberId || 'SUB')}</td>
+          <td class="px-5 py-3.5 font-medium text-[#0B1F2A]">${escapeHtml(sub.email)}</td>
+          <td class="px-5 py-3.5 text-xs text-[#5B6B73]">${escapeHtml(sub.source || 'Website')}</td>
+          <td class="px-5 py-3.5">
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${sub.status === 'Active' ? 'bg-[#B7E34A]/40 text-[#0B1F2A]' : 'bg-slate-200 text-slate-700'}">${sub.status}</span>
+          </td>
+          <td class="px-5 py-3.5 text-xs text-[#5B6B73]">${formatDate(sub.subscribedAt || sub.createdAt)}</td>
+          <td class="px-5 py-3.5 text-right">
+            <button onclick="toggleSubscriberStatus('${sub._id}', '${sub.status === 'Active' ? 'Unsubscribed' : 'Active'}')" class="text-xs font-semibold text-[#1F6F78] hover:underline mr-3">
+              ${sub.status === 'Active' ? 'Unsubscribe' : 'Reactivate'}
+            </button>
+            <button onclick="deleteSubscriber('${sub._id}')" class="text-xs font-semibold text-red-600 hover:underline">
+              Delete
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Render Projects Tab
+    function renderProjects() {
+      const container = document.getElementById('projects-grid');
+      if (!container) return;
+
+      if (state.projects.length === 0) {
+        container.innerHTML = `<div class="col-span-2 bg-white rounded-2xl p-12 text-center text-[#5B6B73] border border-[#DDE3E3]">No projects registered. Click "Add Project" or "Seed Sample Data".</div>`;
+        return;
+      }
+
+      container.innerHTML = state.projects.map(proj => `
+        <div class="bg-white rounded-2xl border border-[#DDE3E3] p-6 shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)] flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#0B1F2A] text-[#B7E34A]">${escapeHtml(proj.commodity)}</span>
+              <span class="text-xs font-semibold text-[#1F6F78]">${escapeHtml(proj.stage)} Stage</span>
+            </div>
+            <h4 class="text-xl font-bold font-heading text-[#0B1F2A] mb-1">${escapeHtml(proj.title)}</h4>
+            <div class="text-xs text-[#5B6B73] flex items-center gap-1.5 mb-3">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1F6F78]"></i>
+              <span>${escapeHtml(proj.location)}, ${escapeHtml(proj.country)}</span>
+            </div>
+            <p class="text-sm text-[#16232B] mb-4 leading-relaxed">${escapeHtml(proj.shortSummary || '')}</p>
+            
+            ${proj.highlights && proj.highlights.length ? `
+              <div class="flex flex-wrap gap-1.5 mb-4">
+                ${proj.highlights.map(h => `<span class="px-2 py-0.5 rounded-md bg-[#F5F6F1] border border-[#DDE3E3] text-[11px] text-[#5B6B73] font-medium">${escapeHtml(h)}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="pt-4 border-t border-[#DDE3E3] flex items-center justify-between text-xs">
+            <span class="flex items-center gap-1.5 ${proj.isActive ? 'text-emerald-700' : 'text-slate-400'}">
+              <span class="w-2 h-2 rounded-full ${proj.isActive ? 'bg-emerald-500' : 'bg-slate-300'}"></span>
+              <span>${proj.isActive ? 'Active Asset' : 'Inactive'}</span>
+            </span>
+            <button onclick="deleteProject('${proj._id}')" class="text-red-600 hover:underline font-semibold">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render News Tab
+    function renderNews() {
+      const tbody = document.getElementById('news-table-body');
+      if (!tbody) return;
+
+      if (state.news.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="px-5 py-12 text-center text-[#5B6B73]">No regulatory news found. Click "Publish News" or "Seed Sample Data".</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = state.news.map(article => `
+        <tr class="hover:bg-[#F5F6F1]/60 transition-colors">
+          <td class="px-5 py-3.5 text-xs text-[#5B6B73] whitespace-nowrap">${formatDate(article.publishedAt || article.createdAt)}</td>
+          <td class="px-5 py-3.5">
+            <div class="font-bold text-[#0B1F2A]">${escapeHtml(article.title)}</div>
+            <div class="text-xs text-[#5B6B73] line-clamp-1">${escapeHtml(article.summary || '')}</div>
+          </td>
+          <td class="px-5 py-3.5">
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1F6F78]/15 text-[#1F6F78]">${escapeHtml(article.category)}</span>
+          </td>
+          <td class="px-5 py-3.5">
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${article.isPublished ? 'bg-[#B7E34A]/40 text-[#0B1F2A]' : 'bg-slate-200 text-slate-700'}">${article.isPublished ? 'Published' : 'Draft'}</span>
+          </td>
+          <td class="px-5 py-3.5 text-right">
+            <button onclick="deleteNews('${article._id}')" class="text-xs font-semibold text-red-600 hover:underline">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Modal Operations
+    function viewInquiryDetail(id) {
+      const inq = state.inquiries.find(i => i._id === id);
+      if (!inq) return;
+      state.selectedInquiry = inq;
+
+      document.getElementById('modal-inquiry-role-badge').innerText = inq.role || 'Prospective Investor';
+      document.getElementById('modal-inquiry-name').innerText = inq.name;
+      document.getElementById('modal-inquiry-email').innerText = inq.email;
+      document.getElementById('modal-inquiry-email').href = `mailto:${inq.email}`;
+      document.getElementById('modal-inquiry-phone').innerText = inq.phone || 'None provided';
+      document.getElementById('modal-inquiry-date').innerText = formatDate(inq.createdAt);
+      document.getElementById('modal-inquiry-id').innerText = inq.enquiryId || 'INQ';
+      document.getElementById('modal-inquiry-message').innerText = inq.message;
+      document.getElementById('modal-inquiry-status-select').value = inq.status || 'New';
+      document.getElementById('modal-inquiry-notes').value = inq.notes || '';
+      document.getElementById('modal-inquiry-mailto').href = `mailto:${inq.email}?subject=RE: Monumental Energy Corp. Investor Inquiry (${inq.enquiryId || 'IR'})`;
+
+      document.getElementById('modal-inquiry-save-btn').onclick = async () => {
+        const newStatus = document.getElementById('modal-inquiry-status-select').value;
+        const newNotes = document.getElementById('modal-inquiry-notes').value;
+        await fetch(`/api/v1/enquiries/${inq._id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus, notes: newNotes })
+        });
+        showToast('Inquiry status updated successfully');
+        closeInquiryModal();
+        refreshCurrentTab();
+      };
+
+      document.getElementById('modal-inquiry-delete-btn').onclick = async () => {
+        if (!confirm('Are you sure you want to delete this inquiry?')) return;
+        await fetch(`/api/v1/enquiries/${inq._id}`, { method: 'DELETE' });
+        showToast('Inquiry deleted');
+        closeInquiryModal();
+        refreshCurrentTab();
+      };
+
+      document.getElementById('inquiry-detail-modal').classList.remove('hidden');
+      refreshIcons();
+    }
+
+    function closeInquiryModal() {
+      document.getElementById('inquiry-detail-modal').classList.add('hidden');
+    }
+
+    function openAddSubscriberModal() {
+      document.getElementById('add-subscriber-modal').classList.remove('hidden');
+    }
+    function closeAddSubscriberModal() {
+      document.getElementById('add-subscriber-modal').classList.add('hidden');
+    }
+
+    async function handleAddSubscriber(e) {
+      e.preventDefault();
+      const email = document.getElementById('add-subscriber-email').value;
+      const source = document.getElementById('add-subscriber-source').value;
+      try {
+        const res = await fetch('/api/v1/subscribers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, source })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Subscriber added successfully');
+          closeAddSubscriberModal();
+          refreshCurrentTab();
+        } else {
+          showToast(data.message || 'Error subscribing', 'error');
+        }
+      } catch (err) {
+        showToast('Connection error', 'error');
+      }
+    }
+
+    async function toggleSubscriberStatus(id, newStatus) {
+      await fetch(`/api/v1/subscribers/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      showToast(`Subscriber set to ${newStatus}`);
+      refreshCurrentTab();
+    }
+
+    async function deleteSubscriber(id) {
+      if (!confirm('Delete this subscriber?')) return;
+      await fetch(`/api/v1/subscribers/${id}`, { method: 'DELETE' });
+      showToast('Subscriber removed');
+      refreshCurrentTab();
+    }
+
+    function openAddProjectModal() {
+      document.getElementById('add-project-modal').classList.remove('hidden');
+    }
+    function closeAddProjectModal() {
+      document.getElementById('add-project-modal').classList.add('hidden');
+    }
+
+    async function handleAddProject(e) {
+      e.preventDefault();
+      const title = document.getElementById('proj-title').value;
+      const commodity = document.getElementById('proj-commodity').value;
+      const country = document.getElementById('proj-country').value;
+      const location = document.getElementById('proj-location').value;
+      const stage = document.getElementById('proj-stage').value;
+      const shortSummary = document.getElementById('proj-summary').value;
+      const highlightsStr = document.getElementById('proj-highlights').value;
+      const featured = document.getElementById('proj-featured').checked;
+      const isActive = document.getElementById('proj-active').checked;
+
+      const highlights = highlightsStr.split(',').map(s => s.trim()).filter(Boolean);
+
+      try {
+        const res = await fetch('/api/v1/projects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title, commodity, country, location, stage, shortSummary, highlights, featured, isActive
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Project added successfully');
+          closeAddProjectModal();
+          refreshCurrentTab();
+        } else {
+          showToast(data.message || 'Error creating project', 'error');
+        }
+      } catch (err) {
+        showToast('Network error', 'error');
+      }
+    }
+
+    async function deleteProject(id) {
+      if (!confirm('Delete this project asset?')) return;
+      await fetch(`/api/v1/projects/${id}`, { method: 'DELETE' });
+      showToast('Project deleted');
+      refreshCurrentTab();
+    }
+
+    async function deleteNews(id) {
+      if (!confirm('Delete this press release?')) return;
+      await fetch(`/api/v1/news/${id}`, { method: 'DELETE' });
+      showToast('News release deleted');
+      refreshCurrentTab();
+    }
+
+    // Export Subscribers to CSV
+    function exportSubscribersCSV() {
+      if (state.subscribers.length === 0) {
+        showToast('No subscribers to export', 'error');
+        return;
+      }
+      const header = ['SubscriberID', 'Email', 'Source', 'Status', 'DateJoined'];
+      const rows = state.subscribers.map(s => [
+        s.subscriberId || '',
+        s.email,
+        s.source || '',
+        s.status || 'Active',
+        s.subscribedAt || s.createdAt || ''
+      ]);
+      const csvContent = 'data:text/csv;charset=utf-8,' + [header, ...rows].map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `monumental_energy_subscribers_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast('Subscriber CSV downloaded');
+    }
+
+    // Seed Sample Data
+    async function seedInitialData() {
+      // Seed Projects
+      const sampleProjects = [
+        {
+          title: 'Taranaki Basin Oil & Gas Asset',
+          slug: 'taranaki-basin-oil-gas',
+          commodity: 'Oil & Gas',
+          country: 'New Zealand',
+          location: 'Taranaki Basin',
+          stage: 'Workover',
+          shortSummary: 'High-margin conventional energy production asset with near-term recompletion cash flow opportunities in proven hydrocarbon reserves.',
+          highlights: ['Conventional Production', 'High Netback Margin', 'Immediate Workover Target'],
+          featured: true,
+          isActive: true
+        },
+        {
+          title: 'Salar de Turi Lithium Brine Project',
+          slug: 'salar-de-turi-lithium',
+          commodity: 'Lithium Brine',
+          country: 'Chile',
+          location: 'Antofagasta Region, Lithium Triangle',
+          stage: 'Exploration',
+          shortSummary: 'Strategic exploration asset covering 8,500 hectares in Chile’s world-class Lithium Triangle adjacent to premier lithium brine producers.',
+          highlights: ['8,500 Hectares', 'Lithium Triangle', 'High Geothermal Affinity'],
+          featured: true,
+          isActive: true
+        }
+      ];
+
+      for (const p of sampleProjects) {
+        await fetch('/api/v1/projects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(p)
+        }).catch(() => null);
+      }
+
+      // Seed News
+      const sampleNews = [
+        {
+          title: 'Monumental Energy Commences Taranaki Workover Engineering Program',
+          slug: 'monumental-commences-taranaki-workover',
+          category: 'Operational',
+          summary: 'Monumental announces commencement of detailed technical workover and engineering assessments on the Taranaki Basin wellbores.',
+          content: 'Vancouver, BC - Monumental Energy Corp. is pleased to announce that it has commenced engineering analysis...',
+          publishedAt: new Date(),
+          isPublished: true
+        },
+        {
+          title: 'Monumental Energy Reports Annual General Meeting Results',
+          slug: 'agm-voting-results-2026',
+          category: 'Corporate',
+          summary: 'Shareholders overwhelmingly approve all management resolutions, electing board members Maximilian Sali, Chris Mackay, Ryan Cheung, and Bill Treuren.',
+          content: 'At the Annual General Meeting held in Vancouver, BC, shareholders voted in favour of all resolutions...',
+          publishedAt: new Date(Date.now() - 86400000 * 5),
+          isPublished: true
+        }
+      ];
+
+      for (const n of sampleNews) {
+        await fetch('/api/v1/news', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(n)
+        }).catch(() => null);
+      }
+
+      // Seed Inquiries
+      const sampleInquiries = [
+        {
+          role: 'Prospective Investor',
+          name: 'David Richardson',
+          email: 'd.richardson@apexcapital.ca',
+          phone: '+1 (416) 555-0182',
+          message: 'Interested in receiving the latest corporate presentation deck and Q3 operational updates regarding the Taranaki oil well recompletion schedule.',
+          status: 'New'
+        },
+        {
+          role: 'Current Shareholder',
+          name: 'Sarah Lindqvist',
+          email: 'sarah.lindqvist@nordicenergy.se',
+          phone: '+46 8 123 4567',
+          message: 'Holding TSX-V: MNRG shares since initial listing. Requesting clarity on upcoming lithium brine surface sampling results in Salar de Turi.',
+          status: 'Contacted',
+          notes: 'Sent Investor Relations deck and AGM voting disclosure via email.'
+        }
+      ];
+
+      for (const i of sampleInquiries) {
+        await fetch('/api/v1/enquiries', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(i)
+        }).catch(() => null);
+      }
+
+      // Seed Subscribers
+      const sampleSubs = [
+        { email: 'investor.relations@goldmansachs.com', source: 'Website News Alerts Form' },
+        { email: 'commodities.desk@glencore.com', source: 'Website News Alerts Form' },
+        { email: 'analyst@canaccordgenuity.com', source: 'Website News Alerts Form' }
+      ];
+
+      for (const s of sampleSubs) {
+        await fetch('/api/v1/subscribers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(s)
+        }).catch(() => null);
+      }
+
+      showToast('Sample data seeded successfully!');
+      await refreshCurrentTab();
+    }
+
+    // Helper Utilities
+    function getStatusBadgeClass(status) {
+      switch ((status || '').toLowerCase()) {
+        case 'new': return 'bg-[#B7E34A]/40 text-[#0B1F2A]';
+        case 'contacted': return 'bg-sky-100 text-sky-800';
+        case 'in progress': return 'bg-amber-100 text-amber-800';
+        case 'resolved': return 'bg-emerald-100 text-emerald-800';
+        default: return 'bg-slate-100 text-slate-700';
+      }
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Bootstrapping
+    window.addEventListener('DOMContentLoaded', async () => {
+      refreshIcons();
+      await fetchAllData();
+      renderDashboard();
+    });
+  </script>
+</body>
+</html>
+
