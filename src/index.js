@@ -20,6 +20,16 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static assets from public (logo, favicon, cms assets)
 app.use(express.static(path.join(rootDir, 'public')));
 
+// Auto-connect to database in serverless/Vercel environments
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.warn('[DB Error]', err.message);
+  }
+  next();
+});
+
 // HTTP Request Logger
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
@@ -32,6 +42,7 @@ app.get('/api/health', (req, res) => {
     status: 'online',
     service: 'Monumental Energy Backend & CMS API',
     brand: 'Monumental Energy Corp. (TSX-V: MNRG)',
+    environment: process.env.VERCEL ? 'vercel-serverless' : 'node-server',
     timestamp: new Date().toISOString()
   });
 });
@@ -56,7 +67,7 @@ app.use((req, res) => {
 // Global Error Handler
 app.use(errorHandler);
 
-// Resilient Server Startup with Automatic Port Fallback
+// Resilient Local Server Startup with Automatic Port Fallback (only in non-Vercel environments)
 function startServer(port, retries = 5) {
   const currentPort = Number(port);
   const server = app.listen(currentPort, () => {
@@ -66,9 +77,6 @@ function startServer(port, retries = 5) {
     console.log(`⚡ API Health:   http://localhost:${currentPort}/api/health`);
     console.log(`📡 API Base:     http://localhost:${currentPort}/api/v1`);
     console.log(`====================================================`);
-    
-    // Connect to DB in background
-    connectDB().catch(() => {});
   });
 
   server.on('error', (err) => {
@@ -83,6 +91,8 @@ function startServer(port, retries = 5) {
   return server;
 }
 
-startServer(ServerConfig.PORT);
+if (!process.env.VERCEL) {
+  startServer(ServerConfig.PORT);
+}
 
 export default app;
