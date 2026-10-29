@@ -21,23 +21,13 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static assets from public (logo, favicon, cms assets)
 app.use(express.static(path.join(rootDir, 'public')));
 
-// Auto-connect to database in serverless/Vercel environments
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-  } catch (err) {
-    console.warn('[DB Error]', err.message);
-  }
-  next();
-});
-
 // HTTP Request Logger
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
   next();
 });
 
-// Health check endpoint
+// Immediate Health Check (Never blocked by database or external services)
 app.get(['/api/health', '/health'], (req, res) => {
   res.status(200).json({
     status: 'online',
@@ -48,12 +38,8 @@ app.get(['/api/health', '/health'], (req, res) => {
   });
 });
 
-// API Routes (mounted on both /api and / so rewritten paths always resolve)
-app.use('/api', apiRoutes);
-app.use('/', apiRoutes);
-
-// CMS Portal routes
-app.get(['/', '/api', '/api/index', '/api/index.js', '/admin', '/admin/*'], (req, res) => {
+// CMS Portal routes (Immediate page load with zero database latency)
+app.get(['/', '/admin', '/admin/*'], (req, res) => {
   const indexPath = path.join(rootDir, 'public', 'index.html');
   if (fs.existsSync(indexPath)) {
     return res.sendFile(indexPath);
@@ -86,6 +72,20 @@ app.get(['/', '/api', '/api/index', '/api/index.js', '/admin', '/admin/*'], (req
     </html>
   `);
 });
+
+// Auto-connect to database before executing API queries
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.warn('[DB Error]', err.message);
+  }
+  next();
+});
+
+// API Routes
+app.use('/api', apiRoutes);
+app.use('/', apiRoutes);
 
 // 404 Catch-all Handler for non-existing API routes
 app.use((req, res) => {

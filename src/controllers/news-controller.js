@@ -1,7 +1,6 @@
 import fs from 'fs';
 import { NewsService } from '../services/news-service.js';
 import { successResponse } from '../utils/success-response.js';
-import { parsePressReleasePDF } from '../utils/pdf-parser.js';
 import { ApiError } from '../utils/api-error.js';
 
 const newsService = new NewsService();
@@ -65,6 +64,7 @@ export class NewsController {
         throw new ApiError('Please upload a valid PDF file', 400);
       }
 
+      const { parsePressReleasePDF } = await import('../utils/pdf-parser.js');
       const fileBuffer = req.file.buffer ? req.file.buffer : fs.readFileSync(req.file.path);
       const parsed = await parsePressReleasePDF(fileBuffer);
       const pdfUrl = req.file.filename ? `/uploads/news/${req.file.filename}` : '';
