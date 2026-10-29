@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 });
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/health'], (req, res) => {
   res.status(200).json({
     status: 'online',
     service: 'Monumental Energy Backend & CMS API',
@@ -48,11 +48,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// API Routes
+// API Routes (mounted on both /api and / so rewritten paths always resolve)
 app.use('/api', apiRoutes);
+app.use('/', apiRoutes);
 
 // CMS Portal routes
-app.get(['/', '/admin', '/admin/*'], (req, res) => {
+app.get(['/', '/api', '/api/index', '/api/index.js', '/admin', '/admin/*'], (req, res) => {
   const indexPath = path.join(rootDir, 'public', 'index.html');
   if (fs.existsSync(indexPath)) {
     return res.sendFile(indexPath);
