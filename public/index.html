@@ -65,13 +65,209 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="min-h-screen flex flex-col bg-[#F5F6F1]">
+<body class="min-h-screen flex flex-col bg-[#F5F6F1] antialiased">
 
   <!-- Notification Toast Container -->
   <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 max-w-sm"></div>
 
-  <!-- Main Wrapper -->
-  <div class="flex-1 flex overflow-hidden">
+  <!-- ========================================================================= -->
+  <!-- 1. AUTHENTICATION VIEW (Split-Screen: Login / Registration)                -->
+  <!-- ========================================================================= -->
+  <div id="auth-view" class="min-h-screen flex flex-col lg:flex-row w-full flex-1">
+    
+    <!-- Left Column: Monumental Brand Pillar -->
+    <div class="lg:w-1/2 bg-[#0B1F2A] border-r border-[#1D3B4C] p-8 lg:p-14 flex flex-col justify-between text-white relative overflow-hidden">
+      <!-- Background subtle glow -->
+      <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#1F6F78]/20 blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#B7E34A]/10 blur-3xl pointer-events-none"></div>
+
+      <!-- Top Brand Header -->
+      <div class="relative z-10">
+        <div class="flex items-center gap-3 mb-8">
+          <img src="/images/logo.png" alt="Monumental Energy" class="h-9 w-auto object-contain" onerror="this.src='/favicon.svg'; this.className='w-10 h-10 rounded-xl p-1 bg-[#0E2836]'">
+          <div class="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-[#0E2836] border border-[#1D3B4C] text-[#B7E34A] flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-[#B7E34A] animate-pulse"></span>
+            <span>TSX-V: MNRG</span>
+          </div>
+        </div>
+
+        <h1 class="text-3xl lg:text-4xl font-bold font-heading text-white leading-tight mb-4">
+          Corporate Portal & Asset Management Console
+        </h1>
+        <p class="text-slate-300 text-base max-w-md leading-relaxed mb-8">
+          Better energy for the future and today. Secure administrative gateway for investor relations, asset data, regulatory filings, and shareholder communication.
+        </p>
+
+        <!-- Key Projects Highlights Pills -->
+        <div class="space-y-3 max-w-md">
+          <div class="p-3.5 rounded-xl bg-[#0E2836]/90 border border-[#1D3B4C] flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-[#B7E34A]/15 text-[#B7E34A] flex items-center justify-center shrink-0 mt-0.5">
+              <i data-lucide="flame" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-white">Taranaki Basin Asset</div>
+              <div class="text-[11px] text-slate-400">New Zealand • Conventional Production & Workover Recompletion</div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-[#0E2836]/90 border border-[#1D3B4C] flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-[#1F6F78]/30 text-[#B7E34A] flex items-center justify-center shrink-0 mt-0.5">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-white">Salar de Turi Project</div>
+              <div class="text-[11px] text-slate-400">Chile • 8,500 Hectares Lithium Triangle Brine Exploration</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="relative z-10 pt-8 border-t border-[#1D3B4C]/80 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-400 gap-2">
+        <span>Suite 228 - 1122 Mainland St, Vancouver BC</span>
+        <span class="text-[#B7E34A]">info@monumental.energy</span>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Form Surface -->
+    <div class="lg:w-1/2 bg-[#F5F6F1] flex items-center justify-center p-6 sm:p-10 lg:p-14">
+      <div class="w-full max-w-md bg-white rounded-3xl p-8 sm:p-10 border border-[#DDE3E3] shadow-[0_12px_32px_-4px_rgba(11,31,42,0.08)]">
+        
+        <!-- Toggle Tabs: Login vs Register -->
+        <div class="flex p-1 bg-[#F5F6F1] rounded-2xl border border-[#DDE3E3] mb-8">
+          <button id="auth-tab-login" onclick="switchAuthMode('login')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-[#0B1F2A] text-[#B7E34A] shadow-sm">
+            Sign In
+          </button>
+          <button id="auth-tab-register" onclick="switchAuthMode('register')" class="flex-1 py-2 rounded-xl text-xs font-semibold text-[#5B6B73] hover:text-[#0B1F2A] transition-all">
+            Create Account
+          </button>
+        </div>
+
+        <!-- Inline Error Banner -->
+        <div id="auth-error-banner" class="hidden mb-6 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2.5">
+          <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 text-red-600"></i>
+          <span id="auth-error-text">Authentication failed.</span>
+        </div>
+
+        <!-- ================= FORM: SIGN IN ================= -->
+        <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+          <div>
+            <h2 class="text-2xl font-bold font-heading text-[#0B1F2A]">Sign in to Console</h2>
+            <p class="text-xs text-[#5B6B73] mt-1">Access the corporate portal with your management credentials.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#0B1F2A] mb-1.5">Corporate Email</label>
+            <div class="relative">
+              <i data-lucide="mail" class="w-4 h-4 text-[#5B6B73] absolute left-3.5 top-3"></i>
+              <input id="login-email" type="email" required placeholder="admin@monumental.energy" class="w-full pl-10 pr-4 py-2.5 border border-[#DDE3E3] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F78] focus:border-[#1F6F78]">
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-semibold text-[#0B1F2A]">Password</label>
+              <button type="button" onclick="togglePasswordVisibility('login-password', 'login-eye')" class="text-xs text-[#1F6F78] hover:underline flex items-center gap-1">
+                <i id="login-eye" data-lucide="eye" class="w-3.5 h-3.5"></i>
+                <span id="login-eye-text">Show</span>
+              </button>
+            </div>
+            <div class="relative">
+              <i data-lucide="lock" class="w-4 h-4 text-[#5B6B73] absolute left-3.5 top-3"></i>
+              <input id="login-password" type="password" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 border border-[#DDE3E3] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F78] focus:border-[#1F6F78]">
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs pt-1">
+            <label class="flex items-center gap-2 cursor-pointer text-[#5B6B73]">
+              <input type="checkbox" id="login-remember" checked class="rounded border-[#DDE3E3] text-[#0B1F2A] focus:ring-[#1F6F78]">
+              <span>Remember this session</span>
+            </label>
+            <a href="mailto:info@monumental.energy?subject=Password%20Reset%20Request%20-%20Monumental%20CMS" class="text-[#1F6F78] hover:underline font-medium">Forgot?</a>
+          </div>
+
+          <button id="login-submit-btn" type="submit" class="w-full py-3 rounded-xl bg-[#B7E34A] hover:bg-[#A3CF36] text-[#0B1F2A] font-bold text-sm transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+            <span>Sign In to Dashboard</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+
+          <!-- 1-Click Dev Demo Button -->
+          <div class="pt-4 border-t border-[#DDE3E3]">
+            <button type="button" onclick="fillDevDemoLogin()" class="w-full py-2.5 rounded-xl border border-dashed border-[#1F6F78]/50 bg-[#F5F6F1] hover:bg-[#1F6F78]/10 text-xs font-semibold text-[#1F6F78] flex items-center justify-center gap-1.5 transition">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#B7E34A]"></i>
+              <span>One-Click Dev Admin Login</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- ================= FORM: REGISTER ================= -->
+        <form id="register-form" onsubmit="handleRegisterSubmit(event)" class="space-y-4 hidden">
+          <div>
+            <h2 class="text-2xl font-bold font-heading text-[#0B1F2A]">Create Account</h2>
+            <p class="text-xs text-[#5B6B73] mt-1">Register a new management profile or editor.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#0B1F2A] mb-1.5">Full Name</label>
+            <div class="relative">
+              <i data-lucide="user" class="w-4 h-4 text-[#5B6B73] absolute left-3.5 top-3"></i>
+              <input id="reg-name" type="text" required placeholder="e.g. Maximilian Sali" class="w-full pl-10 pr-4 py-2.5 border border-[#DDE3E3] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#0B1F2A] mb-1.5">Corporate Email</label>
+            <div class="relative">
+              <i data-lucide="mail" class="w-4 h-4 text-[#5B6B73] absolute left-3.5 top-3"></i>
+              <input id="reg-email" type="email" required placeholder="name@monumental.energy" class="w-full pl-10 pr-4 py-2.5 border border-[#DDE3E3] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-[#0B1F2A] mb-1.5">Role</label>
+              <select id="reg-role" class="w-full px-3 py-2.5 border border-[#DDE3E3] rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+                <option value="admin">Admin</option>
+                <option value="editor">Editor</option>
+                <option value="superadmin">Superadmin</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-[#0B1F2A] mb-1.5">Admin Key</label>
+              <input id="reg-key" type="text" value="MONUMENTAL_2026" class="w-full px-3 py-2.5 border border-[#DDE3E3] rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#0B1F2A] mb-1.5">Password</label>
+            <div class="relative">
+              <i data-lucide="lock" class="w-4 h-4 text-[#5B6B73] absolute left-3.5 top-3"></i>
+              <input id="reg-password" type="password" required minlength="6" placeholder="Min. 6 characters" class="w-full pl-10 pr-4 py-2.5 border border-[#DDE3E3] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#0B1F2A] mb-1.5">Confirm Password</label>
+            <div class="relative">
+              <i data-lucide="check" class="w-4 h-4 text-[#5B6B73] absolute left-3.5 top-3"></i>
+              <input id="reg-confirm-password" type="password" required minlength="6" placeholder="Re-enter password" class="w-full pl-10 pr-4 py-2.5 border border-[#DDE3E3] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
+            </div>
+          </div>
+
+          <button id="reg-submit-btn" type="submit" class="w-full py-3 rounded-xl bg-[#0B1F2A] hover:bg-[#153a4e] text-[#B7E34A] font-bold text-sm transition-all duration-200 shadow-md flex items-center justify-center gap-2">
+            <span>Register & Enter CMS</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. AUTHENTICATED DASHBOARD VIEW (Shown when token is verified)            -->
+  <!-- ========================================================================= -->
+  <div id="dashboard-view" class="hidden flex-1 flex overflow-hidden">
     
     <!-- Sidebar -->
     <aside id="sidebar" class="w-64 bg-[#0B1F2A] border-r border-[#1D3B4C] flex flex-col shrink-0 text-white transition-all duration-300 z-30">
@@ -136,7 +332,7 @@
         </a>
         <div class="flex items-center justify-between text-slate-400">
           <span>Vancouver, BC</span>
-          <span class="text-[#B7E34A]">Connected</span>
+          <span class="text-[#B7E34A]">Atlas Active</span>
         </div>
       </div>
     </aside>
@@ -162,15 +358,19 @@
             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
           </button>
 
-          <!-- Admin Profile Badge -->
-          <div class="flex items-center gap-2 pl-3 border-l border-[#DDE3E3]">
-            <div class="w-8 h-8 rounded-full bg-[#0B1F2A] text-[#B7E34A] flex items-center justify-center font-bold text-xs">
+          <!-- User Session Badge & Logout -->
+          <div class="flex items-center gap-3 pl-3 border-l border-[#DDE3E3]">
+            <div id="user-avatar-initials" class="w-8 h-8 rounded-full bg-[#0B1F2A] text-[#B7E34A] flex items-center justify-center font-bold text-xs">
               M
             </div>
             <div class="text-left hidden sm:block">
-              <div class="text-xs font-semibold text-[#0B1F2A]">Corporate Admin</div>
-              <div class="text-[10px] text-[#5B6B73]">IR & Management</div>
+              <div id="user-display-name" class="text-xs font-semibold text-[#0B1F2A]">Corporate Admin</div>
+              <div id="user-display-role" class="text-[10px] text-[#5B6B73] capitalize">Superadmin</div>
             </div>
+            <!-- Logout Button -->
+            <button onclick="handleLogout()" title="Sign Out" class="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition ml-1">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
           </div>
         </div>
       </header>
@@ -310,7 +510,6 @@
             </div>
 
             <div class="flex items-center gap-2 w-full md:w-auto">
-              <!-- Role filter -->
               <select id="inquiry-role-filter" onchange="filterInquiries()" class="px-3 py-2 border border-[#DDE3E3] rounded-xl text-sm bg-white text-[#16232B] focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
                 <option value="All">All Shareholder Roles</option>
                 <option value="Prospective Investor">Prospective Investor</option>
@@ -321,7 +520,6 @@
                 <option value="Other Inquiry">General / Other</option>
               </select>
 
-              <!-- Status filter -->
               <select id="inquiry-status-filter" onchange="filterInquiries()" class="px-3 py-2 border border-[#DDE3E3] rounded-xl text-sm bg-white text-[#16232B] focus:outline-none focus:ring-2 focus:ring-[#1F6F78]">
                 <option value="All">All Statuses</option>
                 <option value="New">New</option>
@@ -333,7 +531,6 @@
             </div>
           </div>
 
-          <!-- Table Container -->
           <div class="bg-white rounded-2xl border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)] overflow-hidden">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-sm">
@@ -347,9 +544,7 @@
                     <th class="px-5 py-3.5 font-semibold text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody id="inquiries-table-body" class="divide-y divide-[#DDE3E3]">
-                  <!-- Populated via JavaScript -->
-                </tbody>
+                <tbody id="inquiries-table-body" class="divide-y divide-[#DDE3E3]"></tbody>
               </table>
             </div>
           </div>
@@ -357,7 +552,6 @@
 
         <!-- ======================= TAB: SUBSCRIBERS ======================= -->
         <section id="tab-subscribers" class="tab-content hidden space-y-4">
-          <!-- Toolbar -->
           <div class="bg-white rounded-2xl p-4 border border-[#DDE3E3] shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
             <div class="relative flex-1 w-full sm:w-auto max-w-md">
               <i data-lucide="search" class="w-4 h-4 text-[#5B6B73] absolute left-3.5 top-3"></i>
@@ -377,7 +571,6 @@
             </div>
           </div>
 
-          <!-- Subscribers Table -->
           <div class="bg-white rounded-2xl border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)] overflow-hidden">
             <div class="overflow-x-auto">
               <table class="w-full text-left text-sm">
@@ -391,9 +584,7 @@
                     <th class="px-5 py-3.5 font-semibold text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody id="subscribers-table-body" class="divide-y divide-[#DDE3E3]">
-                  <!-- Populated via JavaScript -->
-                </tbody>
+                <tbody id="subscribers-table-body" class="divide-y divide-[#DDE3E3]"></tbody>
               </table>
             </div>
           </div>
@@ -412,9 +603,7 @@
             </button>
           </div>
 
-          <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Populated via JavaScript -->
-          </div>
+          <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </section>
 
         <!-- ======================= TAB: NEWS ======================= -->
@@ -442,9 +631,7 @@
                     <th class="px-5 py-3.5 font-semibold text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody id="news-table-body" class="divide-y divide-[#DDE3E3]">
-                  <!-- Populated via JavaScript -->
-                </tbody>
+                <tbody id="news-table-body" class="divide-y divide-[#DDE3E3]"></tbody>
               </table>
             </div>
           </div>
@@ -489,9 +676,7 @@
 
         <div>
           <span class="text-xs font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">Message Content</span>
-          <div id="modal-inquiry-message" class="p-4 bg-white rounded-xl border border-[#DDE3E3] text-[#16232B] whitespace-pre-wrap leading-relaxed">
-            Message text...
-          </div>
+          <div id="modal-inquiry-message" class="p-4 bg-white rounded-xl border border-[#DDE3E3] text-[#16232B] whitespace-pre-wrap leading-relaxed"></div>
         </div>
 
         <div>
@@ -633,10 +818,13 @@
     </div>
   </div>
 
-  <!-- ======================= JAVASCRIPT APP LOGIC ======================= -->
+  <!-- ======================= JAVASCRIPT APPLICATION LOGIC ======================= -->
   <script>
     // State Store
     const state = {
+      isAuthenticated: false,
+      user: null,
+      token: null,
       currentTab: 'dashboard',
       inquiries: [],
       subscribers: [],
@@ -644,6 +832,15 @@
       news: [],
       selectedInquiry: null
     };
+
+    // Helper: Auth Headers
+    function getAuthHeaders() {
+      const headers = { 'Content-Type': 'application/json' };
+      if (state.token) {
+        headers['Authorization'] = `Bearer ${state.token}`;
+      }
+      return headers;
+    }
 
     // Initialize Icons
     function refreshIcons() {
@@ -670,6 +867,213 @@
         toast.classList.add('opacity-0', 'translate-y-2');
         setTimeout(() => toast.remove(), 300);
       }, 3500);
+    }
+
+    // Switch between Login and Register tabs on Auth view
+    function switchAuthMode(mode) {
+      const tabLogin = document.getElementById('auth-tab-login');
+      const tabRegister = document.getElementById('auth-tab-register');
+      const formLogin = document.getElementById('login-form');
+      const formRegister = document.getElementById('register-form');
+      const errorBanner = document.getElementById('auth-error-banner');
+      errorBanner.classList.add('hidden');
+
+      if (mode === 'login') {
+        tabLogin.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-[#0B1F2A] text-[#B7E34A] shadow-sm';
+        tabRegister.className = 'flex-1 py-2 rounded-xl text-xs font-semibold text-[#5B6B73] hover:text-[#0B1F2A] transition-all';
+        formLogin.classList.remove('hidden');
+        formRegister.classList.add('hidden');
+      } else {
+        tabRegister.className = 'flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-[#0B1F2A] text-[#B7E34A] shadow-sm';
+        tabLogin.className = 'flex-1 py-2 rounded-xl text-xs font-semibold text-[#5B6B73] hover:text-[#0B1F2A] transition-all';
+        formRegister.classList.remove('hidden');
+        formLogin.classList.add('hidden');
+      }
+      refreshIcons();
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      const text = document.getElementById(`${iconId}-text`);
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (text) text.innerText = 'Hide';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        if (text) text.innerText = 'Show';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      refreshIcons();
+    }
+
+    function fillDevDemoLogin() {
+      document.getElementById('login-email').value = 'admin@monumental.energy';
+      document.getElementById('login-password').value = 'Monumental2026!';
+      showToast('Dev Admin credentials pre-filled');
+    }
+
+    // Handle Login Submit
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const submitBtn = document.getElementById('login-submit-btn');
+      const errorBanner = document.getElementById('auth-error-banner');
+      const errorText = document.getElementById('auth-error-text');
+
+      errorBanner.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Signing In...</span>`;
+
+      try {
+        const res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success && data.data?.token) {
+          state.token = data.data.token;
+          state.user = data.data.user;
+          state.isAuthenticated = true;
+
+          localStorage.setItem('monumental_auth_token', state.token);
+          localStorage.setItem('monumental_auth_user', JSON.stringify(state.user));
+
+          showToast(`Welcome back, ${state.user.name || 'Admin'}!`);
+          displayDashboard();
+        } else {
+          errorText.innerText = data.message || 'Invalid email or password';
+          errorBanner.classList.remove('hidden');
+          showToast(data.message || 'Login failed', 'error');
+        }
+      } catch (err) {
+        errorText.innerText = 'Network connection error. Please verify the server is running.';
+        errorBanner.classList.remove('hidden');
+        showToast('Connection failed', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Sign In to Dashboard</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        refreshIcons();
+      }
+    }
+
+    // Handle Register Submit
+    async function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const role = document.getElementById('reg-role').value;
+      const inviteKey = document.getElementById('reg-key').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const confirmPassword = document.getElementById('reg-confirm-password').value;
+      const submitBtn = document.getElementById('reg-submit-btn');
+      const errorBanner = document.getElementById('auth-error-banner');
+      const errorText = document.getElementById('auth-error-text');
+
+      errorBanner.classList.add('hidden');
+
+      if (password !== confirmPassword) {
+        errorText.innerText = 'Passwords do not match';
+        errorBanner.classList.remove('hidden');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Registering...</span>`;
+
+      try {
+        const res = await fetch('/api/v1/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, role, password, inviteKey })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success && data.data?.token) {
+          state.token = data.data.token;
+          state.user = data.data.user;
+          state.isAuthenticated = true;
+
+          localStorage.setItem('monumental_auth_token', state.token);
+          localStorage.setItem('monumental_auth_user', JSON.stringify(state.user));
+
+          showToast(`Account created! Welcome, ${state.user.name}`);
+          displayDashboard();
+        } else {
+          errorText.innerText = data.message || 'Registration failed';
+          errorBanner.classList.remove('hidden');
+          showToast(data.message || 'Registration failed', 'error');
+        }
+      } catch (err) {
+        errorText.innerText = 'Network connection error. Please try again.';
+        errorBanner.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Register & Enter CMS</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        refreshIcons();
+      }
+    }
+
+    // Logout
+    function handleLogout() {
+      localStorage.removeItem('monumental_auth_token');
+      localStorage.removeItem('monumental_auth_user');
+      state.token = null;
+      state.user = null;
+      state.isAuthenticated = false;
+
+      showToast('Signed out successfully');
+      displayAuth();
+    }
+
+    function displayDashboard() {
+      document.getElementById('auth-view').classList.add('hidden');
+      document.getElementById('dashboard-view').classList.remove('hidden');
+
+      if (state.user) {
+        document.getElementById('user-display-name').innerText = state.user.name || 'Corporate Admin';
+        document.getElementById('user-display-role').innerText = state.user.role || 'Superadmin';
+        const initials = (state.user.name || 'M')
+          .split(' ')
+          .map(w => w[0])
+          .join('')
+          .toUpperCase()
+          .slice(0, 2);
+        document.getElementById('user-avatar-initials').innerText = initials || 'M';
+      }
+
+      refreshCurrentTab();
+      refreshIcons();
+    }
+
+    function displayAuth() {
+      document.getElementById('dashboard-view').classList.add('hidden');
+      document.getElementById('auth-view').classList.remove('hidden');
+      refreshIcons();
+    }
+
+    // Check stored session
+    async function checkAuthSession() {
+      const storedToken = localStorage.getItem('monumental_auth_token');
+      const storedUser = localStorage.getItem('monumental_auth_user');
+
+      if (storedToken && storedUser) {
+        try {
+          state.token = storedToken;
+          state.user = JSON.parse(storedUser);
+          state.isAuthenticated = true;
+          displayDashboard();
+          return;
+        } catch (e) {
+          localStorage.removeItem('monumental_auth_token');
+          localStorage.removeItem('monumental_auth_user');
+        }
+      }
+      displayAuth();
     }
 
     // Tab Navigation
@@ -713,14 +1117,15 @@
       refreshIcons();
     }
 
-    // Fetch API Data with Local Fallback
+    // Fetch API Data with Auth Header
     async function fetchAllData() {
       try {
+        const headers = getAuthHeaders();
         const [inqRes, subRes, projRes, newsRes] = await Promise.all([
-          fetch('/api/v1/enquiries').catch(() => null),
-          fetch('/api/v1/subscribers').catch(() => null),
-          fetch('/api/v1/projects').catch(() => null),
-          fetch('/api/v1/news').catch(() => null)
+          fetch('/api/v1/enquiries', { headers }).catch(() => null),
+          fetch('/api/v1/subscribers', { headers }).catch(() => null),
+          fetch('/api/v1/projects', { headers }).catch(() => null),
+          fetch('/api/v1/news', { headers }).catch(() => null)
         ]);
 
         if (inqRes && inqRes.ok) {
@@ -745,62 +1150,74 @@
 
       // Update counters
       const newInquiries = state.inquiries.filter(i => i.status === 'New').length;
-      document.getElementById('badge-inquiries-count').innerText = newInquiries;
-      document.getElementById('badge-subscribers-count').innerText = state.subscribers.length;
+      const inqBadge = document.getElementById('badge-inquiries-count');
+      const subBadge = document.getElementById('badge-subscribers-count');
+      if (inqBadge) inqBadge.innerText = newInquiries;
+      if (subBadge) subBadge.innerText = state.subscribers.length;
     }
 
     // Render Dashboard
     function renderDashboard() {
       const newInquiries = state.inquiries.filter(i => i.status === 'New').length;
-      document.getElementById('stat-total-inquiries').innerText = state.inquiries.length;
-      document.getElementById('stat-new-inquiries').innerText = `${newInquiries} New`;
-      document.getElementById('stat-total-subscribers').innerText = state.subscribers.length;
-      document.getElementById('stat-total-projects').innerText = state.projects.length;
-      document.getElementById('stat-total-news').innerText = state.news.length;
+      const elTotalInq = document.getElementById('stat-total-inquiries');
+      const elNewInq = document.getElementById('stat-new-inquiries');
+      const elTotalSub = document.getElementById('stat-total-subscribers');
+      const elTotalProj = document.getElementById('stat-total-projects');
+      const elTotalNews = document.getElementById('stat-total-news');
+
+      if (elTotalInq) elTotalInq.innerText = state.inquiries.length;
+      if (elNewInq) elNewInq.innerText = `${newInquiries} New`;
+      if (elTotalSub) elTotalSub.innerText = state.subscribers.length;
+      if (elTotalProj) elTotalProj.innerText = state.projects.length;
+      if (elTotalNews) elTotalNews.innerText = state.news.length;
 
       // Recent inquiries table
       const tbody = document.getElementById('dashboard-recent-inquiries-body');
-      if (state.inquiries.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-[#5B6B73]">No inquiries received yet. Click "Seed Sample Data" to load demo data.</td></tr>`;
-      } else {
-        tbody.innerHTML = state.inquiries.slice(0, 5).map(inq => `
-          <tr class="hover:bg-[#F5F6F1]/60 transition-colors">
-            <td class="px-4 py-3 font-medium text-[#0B1F2A]">
-              <div>${escapeHtml(inq.name)}</div>
-              <div class="text-xs text-[#5B6B73] font-normal">${escapeHtml(inq.email)}</div>
-            </td>
-            <td class="px-4 py-3">
-              <span class="px-2 py-0.5 rounded text-xs font-semibold bg-[#1F6F78]/15 text-[#1F6F78]">${escapeHtml(inq.role || 'Prospective Investor')}</span>
-            </td>
-            <td class="px-4 py-3">
-              <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${getStatusBadgeClass(inq.status)}">${escapeHtml(inq.status || 'New')}</span>
-            </td>
-            <td class="px-4 py-3 text-xs text-[#5B6B73]">
-              ${formatDate(inq.createdAt)}
-            </td>
-            <td class="px-4 py-3 text-right">
-              <button onclick="viewInquiryDetail('${inq._id}')" class="text-xs font-semibold text-[#1F6F78] hover:text-[#0B1F2A] hover:underline">
-                View
-              </button>
-            </td>
-          </tr>
-        `).join('');
+      if (tbody) {
+        if (state.inquiries.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-[#5B6B73]">No inquiries received yet. Click "Seed Sample Data" to load demo data.</td></tr>`;
+        } else {
+          tbody.innerHTML = state.inquiries.slice(0, 5).map(inq => `
+            <tr class="hover:bg-[#F5F6F1]/60 transition-colors">
+              <td class="px-4 py-3 font-medium text-[#0B1F2A]">
+                <div>${escapeHtml(inq.name)}</div>
+                <div class="text-xs text-[#5B6B73] font-normal">${escapeHtml(inq.email)}</div>
+              </td>
+              <td class="px-4 py-3">
+                <span class="px-2 py-0.5 rounded text-xs font-semibold bg-[#1F6F78]/15 text-[#1F6F78]">${escapeHtml(inq.role || 'Prospective Investor')}</span>
+              </td>
+              <td class="px-4 py-3">
+                <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${getStatusBadgeClass(inq.status)}">${escapeHtml(inq.status || 'New')}</span>
+              </td>
+              <td class="px-4 py-3 text-xs text-[#5B6B73]">
+                ${formatDate(inq.createdAt)}
+              </td>
+              <td class="px-4 py-3 text-right">
+                <button onclick="viewInquiryDetail('${inq._id}')" class="text-xs font-semibold text-[#1F6F78] hover:text-[#0B1F2A] hover:underline">
+                  View
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
       }
 
       // Recent subscribers
       const subList = document.getElementById('dashboard-recent-subscribers-list');
-      if (state.subscribers.length === 0) {
-        subList.innerHTML = `<p class="text-center text-[#5B6B73] text-sm py-8">No subscribers yet.</p>`;
-      } else {
-        subList.innerHTML = state.subscribers.slice(0, 5).map(sub => `
-          <div class="flex items-center justify-between p-3 rounded-xl bg-[#F5F6F1] border border-[#DDE3E3]/70">
-            <div class="min-w-0 pr-2">
-              <div class="text-sm font-semibold text-[#0B1F2A] truncate">${escapeHtml(sub.email)}</div>
-              <div class="text-[11px] text-[#5B6B73]">${formatDate(sub.subscribedAt || sub.createdAt)}</div>
+      if (subList) {
+        if (state.subscribers.length === 0) {
+          subList.innerHTML = `<p class="text-center text-[#5B6B73] text-sm py-8">No subscribers yet.</p>`;
+        } else {
+          subList.innerHTML = state.subscribers.slice(0, 5).map(sub => `
+            <div class="flex items-center justify-between p-3 rounded-xl bg-[#F5F6F1] border border-[#DDE3E3]/70">
+              <div class="min-w-0 pr-2">
+                <div class="text-sm font-semibold text-[#0B1F2A] truncate">${escapeHtml(sub.email)}</div>
+                <div class="text-[11px] text-[#5B6B73]">${formatDate(sub.subscribedAt || sub.createdAt)}</div>
+              </div>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sub.status === 'Active' ? 'bg-[#B7E34A]/40 text-[#0B1F2A]' : 'bg-slate-200 text-slate-700'}">${sub.status}</span>
             </div>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sub.status === 'Active' ? 'bg-[#B7E34A]/40 text-[#0B1F2A]' : 'bg-slate-200 text-slate-700'}">${sub.status}</span>
-          </div>
-        `).join('');
+          `).join('');
+        }
       }
     }
 
@@ -999,7 +1416,7 @@
         const newNotes = document.getElementById('modal-inquiry-notes').value;
         await fetch(`/api/v1/enquiries/${inq._id}/status`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders(),
           body: JSON.stringify({ status: newStatus, notes: newNotes })
         });
         showToast('Inquiry status updated successfully');
@@ -1009,7 +1426,10 @@
 
       document.getElementById('modal-inquiry-delete-btn').onclick = async () => {
         if (!confirm('Are you sure you want to delete this inquiry?')) return;
-        await fetch(`/api/v1/enquiries/${inq._id}`, { method: 'DELETE' });
+        await fetch(`/api/v1/enquiries/${inq._id}`, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
         showToast('Inquiry deleted');
         closeInquiryModal();
         refreshCurrentTab();
@@ -1037,7 +1457,7 @@
       try {
         const res = await fetch('/api/v1/subscribers', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders(),
           body: JSON.stringify({ email, source })
         });
         const data = await res.json();
@@ -1056,7 +1476,7 @@
     async function toggleSubscriberStatus(id, newStatus) {
       await fetch(`/api/v1/subscribers/${id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ status: newStatus })
       });
       showToast(`Subscriber set to ${newStatus}`);
@@ -1065,7 +1485,10 @@
 
     async function deleteSubscriber(id) {
       if (!confirm('Delete this subscriber?')) return;
-      await fetch(`/api/v1/subscribers/${id}`, { method: 'DELETE' });
+      await fetch(`/api/v1/subscribers/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
       showToast('Subscriber removed');
       refreshCurrentTab();
     }
@@ -1094,7 +1517,7 @@
       try {
         const res = await fetch('/api/v1/projects', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders(),
           body: JSON.stringify({
             title, commodity, country, location, stage, shortSummary, highlights, featured, isActive
           })
@@ -1114,14 +1537,20 @@
 
     async function deleteProject(id) {
       if (!confirm('Delete this project asset?')) return;
-      await fetch(`/api/v1/projects/${id}`, { method: 'DELETE' });
+      await fetch(`/api/v1/projects/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
       showToast('Project deleted');
       refreshCurrentTab();
     }
 
     async function deleteNews(id) {
       if (!confirm('Delete this press release?')) return;
-      await fetch(`/api/v1/news/${id}`, { method: 'DELETE' });
+      await fetch(`/api/v1/news/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeaders()
+      });
       showToast('News release deleted');
       refreshCurrentTab();
     }
@@ -1153,7 +1582,6 @@
 
     // Seed Sample Data
     async function seedInitialData() {
-      // Seed Projects
       const sampleProjects = [
         {
           title: 'Taranaki Basin Oil & Gas Asset',
@@ -1184,12 +1612,11 @@
       for (const p of sampleProjects) {
         await fetch('/api/v1/projects', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders(),
           body: JSON.stringify(p)
         }).catch(() => null);
       }
 
-      // Seed News
       const sampleNews = [
         {
           title: 'Monumental Energy Commences Taranaki Workover Engineering Program',
@@ -1214,12 +1641,11 @@
       for (const n of sampleNews) {
         await fetch('/api/v1/news', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders(),
           body: JSON.stringify(n)
         }).catch(() => null);
       }
 
-      // Seed Inquiries
       const sampleInquiries = [
         {
           role: 'Prospective Investor',
@@ -1243,12 +1669,11 @@
       for (const i of sampleInquiries) {
         await fetch('/api/v1/enquiries', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders(),
           body: JSON.stringify(i)
         }).catch(() => null);
       }
 
-      // Seed Subscribers
       const sampleSubs = [
         { email: 'investor.relations@goldmansachs.com', source: 'Website News Alerts Form' },
         { email: 'commodities.desk@glencore.com', source: 'Website News Alerts Form' },
@@ -1258,7 +1683,7 @@
       for (const s of sampleSubs) {
         await fetch('/api/v1/subscribers', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getAuthHeaders(),
           body: JSON.stringify(s)
         }).catch(() => null);
       }
@@ -1297,10 +1722,8 @@
     // Bootstrapping
     window.addEventListener('DOMContentLoaded', async () => {
       refreshIcons();
-      await fetchAllData();
-      renderDashboard();
+      await checkAuthSession();
     });
   </script>
 </body>
 </html>
-
