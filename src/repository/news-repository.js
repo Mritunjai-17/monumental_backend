@@ -6,12 +6,15 @@ export class NewsRepository extends BaseRepository {
     super(News);
   }
 
-  async getPublishedNews(category) {
-    const query = { isPublished: true };
+  async getPublishedNews(category, includeDrafts = false) {
+    const query = {};
+    if (!includeDrafts) {
+      query.isPublished = true;
+    }
     if (category && category !== 'All') {
       query.category = category;
     }
-    return await this.model.find(query).sort({ publishedAt: -1 });
+    return await this.model.find(query).sort({ publishedAt: -1, createdAt: -1 });
   }
 
   async findBySlug(slug) {

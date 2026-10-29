@@ -818,6 +818,207 @@
     </div>
   </div>
 
+  <!-- ======================= MODAL: PUBLISH NEWS & SMART PDF INGESTION ======================= -->
+  <div id="add-news-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-3 sm:p-5 backdrop-blur-sm">
+    <div class="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-7 shadow-2xl border border-[#DDE3E3] max-h-[92vh] flex flex-col">
+      <div class="flex items-center justify-between pb-4 border-b border-[#DDE3E3]">
+        <div>
+          <span class="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-[#1F6F78]/15 text-[#1F6F78]">Smart PDF Extraction Engine</span>
+          <h3 class="text-xl font-bold font-heading text-[#0B1F2A] mt-1">Publish Regulatory News & Press Release</h3>
+          <p class="text-xs text-[#5B6B73]">Upload an official PDF to auto-extract and populate all fields, or compose manually.</p>
+        </div>
+        <button type="button" onclick="closeAddNewsModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="py-4 space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-1 text-sm">
+        <!-- PDF Dropzone -->
+        <div id="news-pdf-dropzone" onclick="document.getElementById('news-pdf-file-input').click()" class="border-2 border-dashed border-[#1F6F78]/40 hover:border-[#1F6F78] bg-[#F5F6F1]/70 hover:bg-[#F5F6F1] rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 group">
+          <div class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-[#DDE3E3] flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform">
+            <i data-lucide="file-up" class="w-6 h-6 text-[#1F6F78]"></i>
+          </div>
+          <div class="font-bold text-[#0B1F2A] text-sm sm:text-base">Drop Official Press Release PDF here, or <span class="text-[#1F6F78] underline">browse files</span></div>
+          <p class="text-xs text-[#5B6B73] mt-1 max-w-md mx-auto">100% Free &amp; Local extraction — Automatically parses Headline, Date, Category, Excerpt, Formatted Body &amp; Read Time.</p>
+          <input type="file" id="news-pdf-file-input" accept="application/pdf" class="hidden" onchange="handlePdfFileInputChange(event)">
+        </div>
+
+        <!-- Extraction Feedback Status Banner -->
+        <div id="news-pdf-status-banner" class="hidden p-3.5 rounded-xl text-xs flex items-center justify-between"></div>
+
+        <!-- Divider -->
+        <div class="relative my-2">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-[#DDE3E3]"></div></div>
+          <div class="relative flex justify-center text-[11px] uppercase"><span class="bg-white px-3 text-[#5B6B73] font-bold tracking-wider">Review & Edit Press Release</span></div>
+        </div>
+
+        <!-- Form -->
+        <form id="add-news-form" onsubmit="handlePublishNews(event)" class="space-y-3.5">
+          <div>
+            <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Headline Title *</label>
+            <input id="news-title-input" type="text" required placeholder="e.g. Monumental Energy to Partner on the Maata Oil Field in Taranaki Region" class="w-full px-3.5 py-2.5 border border-[#DDE3E3] rounded-xl text-sm font-semibold text-[#0B1F2A] focus:ring-2 focus:ring-[#1F6F78]">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Category</label>
+              <select id="news-category-input" class="w-full px-3 py-2 border border-[#DDE3E3] rounded-xl text-xs sm:text-sm bg-white font-medium">
+                <option value="Press Releases">Press Releases</option>
+                <option value="Corporate Updates">Corporate Updates</option>
+                <option value="Operational">Operational</option>
+                <option value="Financial">Financial</option>
+                <option value="Investor Relations">Investor Relations</option>
+                <option value="Industry Insights">Industry Insights</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Publication Date</label>
+              <input id="news-date-input" type="text" placeholder="e.g. October 29, 2026" class="w-full px-3 py-2 border border-[#DDE3E3] rounded-xl text-xs sm:text-sm">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Estimated Read Time</label>
+              <input id="news-readtime-input" type="text" placeholder="3 min read" class="w-full px-3 py-2 border border-[#DDE3E3] rounded-xl text-xs sm:text-sm">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Release Type</label>
+              <input id="news-releasetype-input" type="text" value="Official Press Release" class="w-full px-3 py-2 border border-[#DDE3E3] rounded-xl text-xs sm:text-sm">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Filing / SEDAR+ URL</label>
+              <input id="news-sourceurl-input" type="url" value="https://www.sedarplus.ca" class="w-full px-3 py-2 border border-[#DDE3E3] rounded-xl text-xs sm:text-sm">
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Executive Excerpt (Lead Summary) *</label>
+            <textarea id="news-excerpt-input" rows="2" required placeholder="Concise overview displayed in card feeds and reader header..." class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-xs sm:text-sm leading-relaxed focus:ring-2 focus:ring-[#1F6F78]"></textarea>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-semibold text-[#5B6B73]">Article Content (Formatted Body) *</label>
+              <span class="text-[11px] text-[#1F6F78] font-medium">&lt;p&gt; paragraphs &amp; &lt;blockquote&gt; supported</span>
+            </div>
+            <textarea id="news-content-input" rows="7" required placeholder="Full press release text..." class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-xs sm:text-sm font-mono leading-relaxed focus:ring-2 focus:ring-[#1F6F78]"></textarea>
+          </div>
+
+          <!-- Attached PDF Indicator -->
+          <div id="news-pdf-url-group" class="hidden bg-[#F5F6F1] p-3 rounded-xl border border-[#DDE3E3] flex items-center justify-between">
+            <div class="flex items-center gap-2 text-xs text-[#0B1F2A]">
+              <i data-lucide="file-text" class="w-4 h-4 text-red-600"></i>
+              <span class="font-semibold">Attached PDF:</span>
+              <span id="news-pdf-url-display" class="font-mono text-[11px] text-[#1F6F78] truncate max-w-xs"></span>
+            </div>
+            <a id="news-pdf-preview-link" href="#" target="_blank" class="text-xs text-[#1F6F78] hover:underline font-semibold flex items-center gap-1">
+              <span>View Uploaded PDF</span>
+              <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+          <input id="news-pdfurl-input" type="hidden" value="">
+
+          <div class="flex items-center justify-between pt-1">
+            <label class="flex items-center gap-2 cursor-pointer text-xs font-medium">
+              <input id="news-published-checkbox" type="checkbox" checked class="rounded text-[#1F6F78]">
+              <span>Publish immediately to public website</span>
+            </label>
+            <button type="button" onclick="resetNewsForm()" class="text-xs text-[#5B6B73] hover:text-[#0B1F2A] hover:underline">
+              Clear Form
+            </button>
+          </div>
+
+          <div class="pt-4 border-t border-[#DDE3E3] flex items-center justify-end gap-2">
+            <button type="button" onclick="closeAddNewsModal()" class="px-4 py-2 border border-[#DDE3E3] rounded-xl text-xs font-semibold hover:bg-slate-50 transition">Cancel</button>
+            <button type="submit" class="px-5 py-2 bg-[#0B1F2A] text-[#B7E34A] rounded-xl text-xs font-bold hover:bg-[#153a4e] shadow transition flex items-center gap-1.5">
+              <i data-lucide="check" class="w-4 h-4"></i>
+              <span>Publish Press Release</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================= MODAL: INTERACTIVE NEWS READER MODAL ======================= -->
+  <div id="news-reader-modal" class="fixed inset-0 bg-black/75 z-50 hidden flex items-center justify-center p-3 sm:p-5 backdrop-blur-md">
+    <div class="bg-[#0B1F2A] rounded-3xl max-w-5xl w-full border border-white/10 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+      <!-- Dark Navy Top Header -->
+      <div class="p-6 sm:p-7 border-b border-white/10 flex items-start justify-between">
+        <div>
+          <span class="text-xs font-bold tracking-widest text-[#B7E34A] uppercase">PRESS RELEASES &amp; REGULATORY FILINGS</span>
+          <h2 class="text-2xl sm:text-3xl font-bold font-heading text-white mt-1">Official Press Release Portal</h2>
+          <p class="text-xs sm:text-sm text-slate-300 mt-0.5">Verified public disclosures, operational milestones, and corporate updates.</p>
+        </div>
+        <button onclick="closeNewsReaderModal()" class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Split 2-Column Body -->
+      <div class="bg-white flex-1 overflow-hidden flex flex-col md:flex-row text-slate-800">
+        <!-- Left Column: Article Directory Sidebar -->
+        <div class="w-full md:w-80 border-r border-[#DDE3E3] bg-[#F5F6F1]/50 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-2">
+          <div class="flex items-center justify-between text-xs font-bold text-[#5B6B73] uppercase tracking-wider mb-1 px-1">
+            <span>PRESS RELEASES</span>
+            <span id="reader-articles-count" class="px-2 py-0.5 rounded-full bg-[#1F6F78]/15 text-[#1F6F78] font-mono text-[11px]">0</span>
+          </div>
+          <div id="reader-directory-list" class="space-y-2"></div>
+        </div>
+
+        <!-- Right Column: Reader Article View -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 space-y-5 bg-white">
+          <!-- Meta Header -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[#DDE3E3]">
+            <div class="flex items-center gap-2">
+              <span id="reader-category-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#1F6F78]/15 text-[#1F6F78]">Press Releases</span>
+              <span id="reader-date" class="text-xs font-semibold text-[#5B6B73]">October 29, 2026</span>
+              <span class="text-slate-300">•</span>
+              <span id="reader-readtime" class="text-xs font-semibold text-[#5B6B73]">3 min read</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <a id="reader-pdf-link" href="#" target="_blank" class="hidden px-3 py-1.5 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                <span>Official PDF</span>
+              </a>
+              <a id="reader-sedar-link" href="#" target="_blank" class="px-3 py-1.5 rounded-xl bg-[#F5F6F1] text-[#0B1F2A] hover:bg-[#E5E8DD] border border-[#DDE3E3] text-xs font-semibold flex items-center gap-1.5 transition">
+                <span>SEDAR+ Filing</span>
+                <i data-lucide="external-link" class="w-3.5 h-3.5 text-[#1F6F78]"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- Headline -->
+          <h1 id="reader-title" class="text-2xl sm:text-3xl font-bold font-heading text-[#0B1F2A] leading-tight">Article Headline Title</h1>
+
+          <!-- Lead Excerpt Box -->
+          <div id="reader-excerpt-container" class="p-4 sm:p-5 rounded-2xl bg-[#F5F6F1] border-l-4 border-[#1F6F78]">
+            <p id="reader-excerpt" class="text-sm sm:text-base text-[#0B1F2A] font-medium leading-relaxed"></p>
+          </div>
+
+          <!-- Formatted HTML Content -->
+          <div id="reader-body" class="prose max-w-none text-sm sm:text-base text-[#16232B] space-y-4 leading-relaxed"></div>
+
+          <!-- Regulatory Disclosure Tag -->
+          <div class="pt-6 border-t border-[#DDE3E3] text-xs text-[#5B6B73] flex items-center justify-between">
+            <span>Disseminated via Newsfile / TSX Venture Exchange</span>
+            <span id="reader-release-type" class="font-semibold text-[#0B1F2A]">Official Press Release</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="bg-[#0B1F2A] px-6 py-3.5 flex items-center justify-between text-xs text-slate-400 border-t border-white/10">
+        <span>Monumental Energy Corp. (TSXV: MNRG)</span>
+        <button onclick="closeNewsReaderModal()" class="flex items-center gap-1.5 text-white hover:text-[#B7E34A] font-semibold transition">
+          <span>Close</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ======================= JAVASCRIPT APPLICATION LOGIC ======================= -->
   <script>
     // State Store
@@ -1375,10 +1576,22 @@
 
       tbody.innerHTML = state.news.map(article => `
         <tr class="hover:bg-[#F5F6F1]/60 transition-colors">
-          <td class="px-5 py-3.5 text-xs text-[#5B6B73] whitespace-nowrap">${formatDate(article.publishedAt || article.createdAt)}</td>
+          <td class="px-5 py-3.5 text-xs text-[#5B6B73] whitespace-nowrap">
+            <span class="font-bold text-[#0B1F2A] block">${escapeHtml(article.date || formatDate(article.publishedAt || article.createdAt))}</span>
+            <span class="text-[11px] text-[#5B6B73]">${escapeHtml(article.readTime || '3 min read')}</span>
+          </td>
           <td class="px-5 py-3.5">
-            <div class="font-bold text-[#0B1F2A]">${escapeHtml(article.title)}</div>
-            <div class="text-xs text-[#5B6B73] line-clamp-1">${escapeHtml(article.summary || '')}</div>
+            <div class="font-bold text-[#0B1F2A] text-sm leading-snug">${escapeHtml(article.title)}</div>
+            <div class="text-xs text-[#5B6B73] line-clamp-1 mt-0.5">${escapeHtml(article.excerpt || article.summary || '')}</div>
+            ${article.pdfUrl ? `
+              <div class="mt-1.5 flex items-center gap-2">
+                <a href="${escapeHtml(article.pdfUrl)}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[11px] font-semibold bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 transition-colors">
+                  <i data-lucide="file-text" class="w-3 h-3"></i>
+                  <span>Press Release PDF</span>
+                  <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
+                </a>
+              </div>
+            ` : ''}
           </td>
           <td class="px-5 py-3.5">
             <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#1F6F78]/15 text-[#1F6F78]">${escapeHtml(article.category)}</span>
@@ -1386,11 +1599,300 @@
           <td class="px-5 py-3.5">
             <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${article.isPublished ? 'bg-[#B7E34A]/40 text-[#0B1F2A]' : 'bg-slate-200 text-slate-700'}">${article.isPublished ? 'Published' : 'Draft'}</span>
           </td>
-          <td class="px-5 py-3.5 text-right">
-            <button onclick="deleteNews('${article._id}')" class="text-xs font-semibold text-red-600 hover:underline">Delete</button>
+          <td class="px-5 py-3.5 text-right whitespace-nowrap">
+            <div class="flex items-center justify-end gap-2">
+              <button onclick="openNewsReader('${article._id}')" class="px-3 py-1.5 rounded-xl border border-[#DDE3E3] hover:border-[#1F6F78] text-xs font-semibold text-[#0B1F2A] hover:bg-[#F5F6F1] flex items-center gap-1.5 transition">
+                <i data-lucide="book-open" class="w-3.5 h-3.5 text-[#1F6F78]"></i>
+                <span>Reader Modal</span>
+              </button>
+              <button onclick="deleteNews('${article._id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition">
+                Delete
+              </button>
+            </div>
           </td>
         </tr>
       `).join('');
+    }
+
+    // =========================================================================
+    // News & Smart PDF Ingestion Functions
+    // =========================================================================
+    function openAddNewsModal() {
+      document.getElementById('add-news-modal').classList.remove('hidden');
+      resetNewsForm();
+      refreshIcons();
+    }
+
+    function closeAddNewsModal() {
+      document.getElementById('add-news-modal').classList.add('hidden');
+    }
+
+    function resetNewsForm() {
+      document.getElementById('news-title-input').value = '';
+      document.getElementById('news-category-input').value = 'Press Releases';
+      document.getElementById('news-date-input').value = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      document.getElementById('news-readtime-input').value = '3 min read';
+      document.getElementById('news-releasetype-input').value = 'Official Press Release';
+      document.getElementById('news-sourceurl-input').value = 'https://www.sedarplus.ca';
+      document.getElementById('news-excerpt-input').value = '';
+      document.getElementById('news-content-input').value = '';
+      document.getElementById('news-pdfurl-input').value = '';
+      document.getElementById('news-pdf-url-group').classList.add('hidden');
+      document.getElementById('news-pdf-status-banner').classList.add('hidden');
+      const fileInput = document.getElementById('news-pdf-file-input');
+      if (fileInput) fileInput.value = '';
+    }
+
+    async function handlePdfFileInputChange(e) {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        await processPdfUpload(file);
+      }
+    }
+
+    async function processPdfUpload(file) {
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        showToast('Please select an official PDF document', 'error');
+        return;
+      }
+
+      const statusBanner = document.getElementById('news-pdf-status-banner');
+      statusBanner.className = 'p-3.5 rounded-xl text-xs flex items-center gap-2 bg-[#1F6F78]/10 text-[#1F6F78] border border-[#1F6F78]/30';
+      statusBanner.innerHTML = `
+        <div class="w-4 h-4 border-2 border-[#1F6F78] border-t-transparent rounded-full animate-spin"></div>
+        <span>Uploading and extracting structured content from <strong>${escapeHtml(file.name)}</strong>...</span>
+      `;
+      statusBanner.classList.remove('hidden');
+
+      try {
+        const formData = new FormData();
+        formData.append('pdf', file);
+
+        // Send auth header without Content-Type so browser specifies multipart boundary
+        const headers = {};
+        if (state.token) {
+          headers['Authorization'] = `Bearer ${state.token}`;
+        }
+
+        const res = await fetch('/api/v1/news/upload-pdf', {
+          method: 'POST',
+          headers,
+          body: formData
+        });
+
+        const data = await res.json();
+        if (data.success && data.data) {
+          const parsed = data.data;
+
+          if (parsed.title) document.getElementById('news-title-input').value = parsed.title;
+          if (parsed.date) document.getElementById('news-date-input').value = parsed.date;
+          if (parsed.category) document.getElementById('news-category-input').value = parsed.category;
+          if (parsed.readTime) document.getElementById('news-readtime-input').value = parsed.readTime;
+          if (parsed.excerpt) document.getElementById('news-excerpt-input').value = parsed.excerpt;
+          if (parsed.content) document.getElementById('news-content-input').value = parsed.content;
+
+          if (parsed.pdfUrl) {
+            document.getElementById('news-pdfurl-input').value = parsed.pdfUrl;
+            document.getElementById('news-pdf-url-display').innerText = parsed.fileName || parsed.pdfUrl;
+            document.getElementById('news-pdf-preview-link').href = parsed.pdfUrl;
+            document.getElementById('news-pdf-url-group').classList.remove('hidden');
+          }
+
+          statusBanner.className = 'p-3.5 rounded-xl text-xs flex items-center justify-between bg-emerald-50 text-emerald-800 border border-emerald-200';
+          statusBanner.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>Successfully extracted <strong>${escapeHtml(file.name)}</strong> (${(file.size / 1024).toFixed(1)} KB, ${parsed.pageCount || 1} pages). All fields auto-filled below!</span>
+            </div>
+          `;
+          showToast('PDF parsed and auto-filled successfully!');
+          refreshIcons();
+        } else {
+          statusBanner.className = 'p-3.5 rounded-xl text-xs flex items-center gap-2 bg-red-50 text-red-800 border border-red-200';
+          statusBanner.innerHTML = `<span>Extraction notice: ${escapeHtml(data.message || 'Could not parse PDF content')}</span>`;
+          showToast(data.message || 'PDF extraction failed', 'error');
+        }
+      } catch (err) {
+        statusBanner.className = 'p-3.5 rounded-xl text-xs flex items-center gap-2 bg-red-50 text-red-800 border border-red-200';
+        statusBanner.innerHTML = `<span>Upload failed: ${escapeHtml(err.message)}</span>`;
+        showToast('Failed to upload PDF', 'error');
+      }
+    }
+
+    function initNewsPdfDropzone() {
+      const dropzone = document.getElementById('news-pdf-dropzone');
+      if (!dropzone) return;
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('border-[#1F6F78]', 'bg-[#1F6F78]/15');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('border-[#1F6F78]', 'bg-[#1F6F78]/15');
+        }, false);
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+          processPdfUpload(files[0]);
+        }
+      }, false);
+    }
+
+    async function handlePublishNews(e) {
+      e.preventDefault();
+      const title = document.getElementById('news-title-input').value.trim();
+      const category = document.getElementById('news-category-input').value;
+      const date = document.getElementById('news-date-input').value.trim();
+      const readTime = document.getElementById('news-readtime-input').value.trim();
+      const releaseType = document.getElementById('news-releasetype-input').value.trim();
+      const sourceUrl = document.getElementById('news-sourceurl-input').value.trim();
+      const excerpt = document.getElementById('news-excerpt-input').value.trim();
+      const content = document.getElementById('news-content-input').value.trim();
+      const pdfUrl = document.getElementById('news-pdfurl-input').value.trim();
+      const isPublished = document.getElementById('news-published-checkbox').checked;
+
+      try {
+        const res = await fetch('/api/v1/news', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            title,
+            category,
+            date,
+            readTime,
+            releaseType,
+            source: 'TSX-V / Newsfile Distribution',
+            sourceUrl,
+            excerpt,
+            content,
+            pdfUrl,
+            isPublished
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showToast('Press Release published successfully!');
+          closeAddNewsModal();
+          await refreshCurrentTab();
+        } else {
+          showToast(data.message || 'Failed to publish news', 'error');
+        }
+      } catch (err) {
+        showToast('Network error while publishing', 'error');
+      }
+    }
+
+    // =========================================================================
+    // News Reader Modal (2-Column Architecture matching TeamCardWithModal.tsx)
+    // =========================================================================
+    function openNewsReader(articleId) {
+      if (!state.news || state.news.length === 0) {
+        showToast('No articles available to preview', 'error');
+        return;
+      }
+
+      const modal = document.getElementById('news-reader-modal');
+      modal.classList.remove('hidden');
+
+      const activeArticle = state.news.find(a => a._id === articleId) || state.news[0];
+      state.selectedNewsId = activeArticle._id;
+
+      renderReaderDirectory();
+      renderReaderArticle(activeArticle);
+      refreshIcons();
+    }
+
+    function closeNewsReaderModal() {
+      document.getElementById('news-reader-modal').classList.add('hidden');
+    }
+
+    function selectReaderArticle(articleId) {
+      const article = state.news.find(a => a._id === articleId);
+      if (!article) return;
+      state.selectedNewsId = article._id;
+      renderReaderDirectory();
+      renderReaderArticle(article);
+      refreshIcons();
+    }
+
+    function renderReaderDirectory() {
+      const countEl = document.getElementById('reader-articles-count');
+      if (countEl) countEl.innerText = state.news.length;
+
+      const container = document.getElementById('reader-directory-list');
+      if (!container) return;
+
+      container.innerHTML = state.news.map(article => {
+        const isActive = article._id === state.selectedNewsId;
+        return `
+          <div onclick="selectReaderArticle('${article._id}')" class="p-3.5 rounded-2xl border transition-all cursor-pointer ${
+            isActive 
+              ? 'bg-[#0B1F2A] text-white border-[#0B1F2A] shadow-md' 
+              : 'bg-white hover:bg-[#F5F6F1] text-[#0B1F2A] border-[#DDE3E3]'
+          }">
+            <div class="flex items-center justify-between text-[11px] mb-1.5">
+              <span class="font-bold ${isActive ? 'text-[#B7E34A]' : 'text-[#1F6F78]'}">${escapeHtml(article.category || 'Press Release')}</span>
+              <span class="${isActive ? 'text-slate-300' : 'text-[#5B6B73]'}">${escapeHtml(article.date || formatDate(article.publishedAt))}</span>
+            </div>
+            <h4 class="text-xs sm:text-sm font-bold line-clamp-2 leading-snug">${escapeHtml(article.title)}</h4>
+            ${article.pdfUrl ? `
+              <div class="mt-2 flex items-center gap-1 text-[10px] font-semibold ${isActive ? 'text-red-300' : 'text-red-600'}">
+                <i data-lucide="file-text" class="w-3 h-3"></i>
+                <span>PDF Available</span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderReaderArticle(article) {
+      document.getElementById('reader-category-badge').innerText = article.category || 'Press Releases';
+      document.getElementById('reader-date').innerText = article.date || formatDate(article.publishedAt);
+      document.getElementById('reader-readtime').innerText = article.readTime || '3 min read';
+      document.getElementById('reader-title').innerText = article.title;
+      
+      const excerptEl = document.getElementById('reader-excerpt');
+      const excerptContainer = document.getElementById('reader-excerpt-container');
+      if (article.excerpt) {
+        excerptEl.innerText = article.excerpt;
+        excerptContainer.classList.remove('hidden');
+      } else {
+        excerptContainer.classList.add('hidden');
+      }
+
+      const bodyEl = document.getElementById('reader-body');
+      if (article.content && (article.content.includes('<p>') || article.content.includes('<blockquote') || article.content.includes('<div'))) {
+        bodyEl.innerHTML = article.content;
+      } else if (article.content) {
+        bodyEl.innerHTML = article.content.split('\n\n').map(p => `<p class="mb-4 text-[#16232B] leading-relaxed">${escapeHtml(p)}</p>`).join('');
+      } else {
+        bodyEl.innerHTML = '<p class="text-[#5B6B73] italic">No content text available.</p>';
+      }
+
+      const pdfLink = document.getElementById('reader-pdf-link');
+      if (article.pdfUrl) {
+        pdfLink.href = article.pdfUrl;
+        pdfLink.classList.remove('hidden');
+      } else {
+        pdfLink.classList.add('hidden');
+      }
+
+      const sedarLink = document.getElementById('reader-sedar-link');
+      sedarLink.href = article.sourceUrl || 'https://www.sedarplus.ca';
+
+      document.getElementById('reader-release-type').innerText = article.releaseType || 'Official Press Release';
     }
 
     // Modal Operations
@@ -1722,6 +2224,7 @@
     // Bootstrapping
     window.addEventListener('DOMContentLoaded', async () => {
       refreshIcons();
+      initNewsPdfDropzone();
       await checkAuthSession();
     });
   </script>

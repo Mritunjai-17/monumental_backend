@@ -4,7 +4,7 @@ const NewsSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      required: [true, 'Headline title is required'],
       trim: true
     },
     slug: {
@@ -14,31 +14,57 @@ const NewsSchema = new mongoose.Schema(
       lowercase: true,
       trim: true
     },
-    category: {
+    date: {
       type: String,
-      enum: ['Corporate', 'Operational', 'Financial', 'Regulatory', 'Events'],
-      default: 'Corporate'
-    },
-    summary: {
-      type: String,
-      required: true,
-      trim: true
-    },
-    content: {
-      type: String,
-      required: true
-    },
-    thumbnail: {
-      type: String,
-      trim: true
-    },
-    pdfUrl: {
-      type: String,
-      trim: true
+      default: () => new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     },
     publishedAt: {
       type: Date,
       default: Date.now
+    },
+    category: {
+      type: String,
+      enum: ['Press Releases', 'Corporate Updates', 'Operational', 'Financial', 'Investor Relations', 'Industry Insights'],
+      default: 'Press Releases'
+    },
+    image: {
+      type: String,
+      default: '/images/about-hero-taranaki.jpg',
+      trim: true
+    },
+    excerpt: {
+      type: String,
+      required: [true, 'Executive excerpt is required'],
+      trim: true
+    },
+    content: {
+      type: String,
+      required: [true, 'Article content is required']
+    },
+    readTime: {
+      type: String,
+      default: '3 min read'
+    },
+    releaseType: {
+      type: String,
+      default: 'Official Press Release'
+    },
+    source: {
+      type: String,
+      default: 'TSX-V / Newsfile Distribution'
+    },
+    sourceUrl: {
+      type: String,
+      default: 'https://www.sedarplus.ca'
+    },
+    pdfUrl: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    verified: {
+      type: Boolean,
+      default: true
     },
     isPublished: {
       type: Boolean,
@@ -49,4 +75,3 @@ const NewsSchema = new mongoose.Schema(
 );
 
 export const News = mongoose.model('News', NewsSchema);
-
