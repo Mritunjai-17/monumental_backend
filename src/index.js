@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { ServerConfig, connectDB } from './config/index.js';
 import apiRoutes from './routes/index.js';
@@ -52,7 +53,37 @@ app.use('/api', apiRoutes);
 
 // CMS Portal routes
 app.get(['/', '/admin', '/admin/*'], (req, res) => {
-  res.sendFile(path.join(rootDir, 'public', 'index.html'));
+  const indexPath = path.join(rootDir, 'public', 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return res.sendFile(indexPath);
+  }
+  return res.status(200).send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>Monumental Energy API</title>
+      <style>
+        body { background:#0B1F2A; color:#F5F6F1; font-family:system-ui,-apple-system,sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; }
+        .card { background:#16232B; padding:40px; border-radius:20px; border:1px solid #1F6F78; max-width:480px; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.4); }
+        h1 { color:#B7E34A; margin-top:0; font-size:24px; }
+        p { color:#94A3B8; font-size:14px; line-height:1.6; }
+        .links { margin-top:24px; display:flex; flex-direction:column; gap:12px; }
+        a { color:#0B1F2A; background:#B7E34A; padding:10px 20px; border-radius:12px; text-decoration:none; font-weight:700; font-size:13px; }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <h1>Monumental Energy API</h1>
+        <p>Production REST API &amp; Serverless Microservice is active.</p>
+        <div class="links">
+          <a href="/api/health">Check API Health &rarr;</a>
+          <a href="/api/v1/news">View Published News &rarr;</a>
+        </div>
+      </div>
+    </body>
+    </html>
+  `);
 });
 
 // 404 Catch-all Handler for non-existing API routes

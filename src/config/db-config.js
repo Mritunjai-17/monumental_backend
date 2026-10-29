@@ -12,6 +12,12 @@ export async function connectDB() {
     return cached.conn;
   }
 
+  // Safeguard: Do not attempt to connect to localhost inside Vercel serverless environment
+  if (!ServerConfig.MONGO_URI || (process.env.VERCEL && ServerConfig.MONGO_URI.includes('127.0.0.1'))) {
+    console.warn('[Database] ⚠️ No remote MONGO_URI configured in Vercel environment. Skipping database connection.');
+    return null;
+  }
+
   if (!cached.promise) {
     cached.promise = mongoose.connect(ServerConfig.MONGO_URI, {
       serverSelectionTimeoutMS: 5000,

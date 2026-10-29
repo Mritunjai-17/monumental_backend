@@ -65,9 +65,9 @@ export class NewsController {
         throw new ApiError('Please upload a valid PDF file', 400);
       }
 
-      const fileBuffer = fs.readFileSync(req.file.path);
+      const fileBuffer = req.file.buffer ? req.file.buffer : fs.readFileSync(req.file.path);
       const parsed = await parsePressReleasePDF(fileBuffer);
-      const pdfUrl = `/uploads/news/${req.file.filename}`;
+      const pdfUrl = req.file.filename ? `/uploads/news/${req.file.filename}` : '';
 
       return successResponse(res, 200, 'PDF extracted and parsed successfully', {
         ...parsed,
