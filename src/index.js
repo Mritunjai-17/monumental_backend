@@ -14,7 +14,8 @@ const rootDir = path.resolve(__dirname, '..');
 const app = express();
 
 // Middlewares
-app.use(cors({ origin: ServerConfig.CORS_ORIGIN, credentials: true }));
+const allowedOrigin = ServerConfig.CORS_ORIGIN === '*' ? true : ServerConfig.CORS_ORIGIN;
+app.use(cors({ origin: allowedOrigin, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
