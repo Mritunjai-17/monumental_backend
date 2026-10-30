@@ -15,7 +15,9 @@ const EnquirySchema = new mongoose.Schema(
         'Investment Advisor',
         'Financial Analyst',
         'Media / Press',
-        'Other Inquiry'
+        'Other Inquiry',
+        'General / Other',
+        'General / Other Inquiry'
       ],
       default: 'Prospective Investor'
     },

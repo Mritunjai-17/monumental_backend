@@ -28,6 +28,9 @@ export class EnquiryService {
     if (!data.message || !data.message.trim()) {
       throw new ApiError('Message is required', 400);
     }
+    if (data.message.trim().length < 10) {
+      throw new ApiError('Message must be at least 10 characters long', 400);
+    }
 
     const payload = {
       role: data.role || 'Prospective Investor',

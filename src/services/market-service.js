@@ -67,6 +67,22 @@ const fallbackHistory = {
     { date: 'Oct 23', price: 0.08, volume: 52000 },
     { date: 'Oct 30', price: 0.08, volume: 27058 }
   ],
+  '3M': [
+    { date: 'Jul 30', price: 0.075, volume: 42000 },
+    { date: 'Aug 07', price: 0.068, volume: 38000 },
+    { date: 'Aug 14', price: 0.088, volume: 85000 },
+    { date: 'Aug 21', price: 0.098, volume: 112000 },
+    { date: 'Aug 28', price: 0.092, volume: 64000 },
+    { date: 'Sep 04', price: 0.078, volume: 49000 },
+    { date: 'Sep 11', price: 0.085, volume: 73000 },
+    { date: 'Sep 18', price: 0.072, volume: 55000 },
+    { date: 'Sep 25', price: 0.070, volume: 61000 },
+    { date: 'Oct 02', price: 0.065, volume: 39000 },
+    { date: 'Oct 09', price: 0.080, volume: 92000 },
+    { date: 'Oct 16', price: 0.074, volume: 48000 },
+    { date: 'Oct 23', price: 0.078, volume: 67000 },
+    { date: 'Oct 29', price: 0.080, volume: 27058 }
+  ],
   '6M': [
     { date: 'May 2026', price: 0.045, volume: 85000 },
     { date: 'Jun 2026', price: 0.05, volume: 92000 },
@@ -89,6 +105,28 @@ const fallbackHistory = {
     { date: 'Apr 2026', price: 0.05, volume: 110000 },
     { date: 'Jul 2026', price: 0.065, volume: 160000 },
     { date: 'Oct 2026', price: 0.08, volume: 180000 }
+  ],
+  '3Y': [
+    { date: '2023', price: 0.12, volume: 420000 },
+    { date: '2024', price: 0.09, volume: 580000 },
+    { date: '2025', price: 0.05, volume: 390000 },
+    { date: '2026', price: 0.08, volume: 610000 }
+  ],
+  '5Y': [
+    { date: '2021', price: 0.18, volume: 850000 },
+    { date: '2022', price: 0.14, volume: 720000 },
+    { date: '2023', price: 0.12, volume: 420000 },
+    { date: '2024', price: 0.09, volume: 580000 },
+    { date: '2025', price: 0.05, volume: 390000 },
+    { date: '2026', price: 0.08, volume: 610000 }
+  ],
+  '10Y': [
+    { date: '2016', price: 0.25, volume: 1200000 },
+    { date: '2018', price: 0.22, volume: 950000 },
+    { date: '2020', price: 0.19, volume: 810000 },
+    { date: '2022', price: 0.14, volume: 720000 },
+    { date: '2024', price: 0.09, volume: 580000 },
+    { date: '2026', price: 0.08, volume: 610000 }
   ]
 };
 
@@ -194,9 +232,13 @@ export class MarketService {
       '1D': { range: '1d', interval: '15m' },
       '5D': { range: '5d', interval: '30m' },
       '1M': { range: '1mo', interval: '1d' },
+      '3M': { range: '3mo', interval: '1d' },
       '6M': { range: '6mo', interval: '1wk' },
       'YTD': { range: 'ytd', interval: '1wk' },
-      '1Y': { range: '1y', interval: '1wk' }
+      '1Y': { range: '1y', interval: '1wk' },
+      '3Y': { range: '3y', interval: '1mo' },
+      '5Y': { range: '5y', interval: '1mo' },
+      '10Y': { range: '10y', interval: '1mo' }
     };
 
     const config = paramMap[tf] || paramMap['5D'];
@@ -240,7 +282,7 @@ export class MarketService {
           dateLabel = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Toronto' });
         } else if (tf === '5D') {
           dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/Toronto' }) + ' ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Toronto' });
-        } else if (tf === '1M') {
+        } else if (tf === '1M' || tf === '3M') {
           dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'America/Toronto' });
         } else {
           dateLabel = d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'America/Toronto' });
