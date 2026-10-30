@@ -5,6 +5,7 @@ import subscriberRoutes from './subscriber-routes.js';
 import projectRoutes from './project-routes.js';
 import newsRoutes from './news-routes.js';
 import statsRoutes from './stats-routes.js';
+import marketRoutes from './market-routes.js';
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.use('/newsletter', subscriberRoutes);
 router.use('/projects', projectRoutes);
 router.use('/news', newsRoutes);
 router.use('/stats', statsRoutes);
+router.use('/market', marketRoutes);
 
 export default router;

@@ -319,6 +319,11 @@
           <i data-lucide="newspaper" class="w-4 h-4"></i>
           <span>Press Releases</span>
         </button>
+
+        <button onclick="navigateTab('market')" id="nav-market" class="nav-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-[#0E2836]">
+          <i data-lucide="trending-up" class="w-4 h-4 text-[#B7E34A]"></i>
+          <span>Market & Capital</span>
+        </button>
       </nav>
 
       <!-- Sidebar Footer -->
@@ -634,6 +639,164 @@
                 <tbody id="news-table-body" class="divide-y divide-[#DDE3E3]"></tbody>
               </table>
             </div>
+          </div>
+        </section>
+
+        <!-- ======================= TAB: MARKET & CAPITAL ======================= -->
+        <section id="tab-market" class="tab-content hidden space-y-6">
+          <!-- Top Live Market Strip Card -->
+          <div class="bg-white rounded-2xl p-6 border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)]">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-[#DDE3E3]">
+              <div>
+                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#0B1F2A] text-[#B7E34A]">TSX-V: MNRG</span>
+                  <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#F5F6F1] border border-[#DDE3E3] text-[#5B6B73]">OTCQB: MNMRF</span>
+                  <span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-[#F5F6F1] border border-[#DDE3E3] text-[#5B6B73]">Frankfurt: ZA6</span>
+                  <span id="market-status-pill" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800">Live Exchange Feed</span>
+                </div>
+                <h3 class="text-xl font-bold font-heading text-[#0B1F2A]">Monumental Energy Corp. — Market Performance</h3>
+                <p id="market-timestamp" class="text-xs text-[#5B6B73] mt-0.5">Syncing live TSX-V exchange data...</p>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <button onclick="refreshLiveMarketData()" class="px-3.5 py-2 rounded-xl border border-[#DDE3E3] hover:border-[#1F6F78] text-xs font-semibold text-[#0B1F2A] hover:bg-[#F5F6F1] flex items-center gap-1.5 transition">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-[#1F6F78]"></i>
+                  <span>Sync Market</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Price & Movement Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 pt-5">
+              <div class="bg-[#F5F6F1] p-4 rounded-xl border border-[#DDE3E3]/80">
+                <span class="text-[11px] font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">Live Share Price</span>
+                <div class="flex items-baseline gap-1.5">
+                  <span id="market-price" class="text-2xl font-bold font-heading text-[#0B1F2A]">$0.08</span>
+                  <span class="text-xs text-[#5B6B73] font-semibold">CAD</span>
+                </div>
+                <div id="market-change-badge" class="mt-1 text-xs font-bold text-emerald-600">+0.005 (+6.67%)</div>
+              </div>
+
+              <div class="bg-[#F5F6F1] p-4 rounded-xl border border-[#DDE3E3]/80">
+                <span class="text-[11px] font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">Trading Volume</span>
+                <span id="market-volume" class="text-2xl font-bold font-heading text-[#0B1F2A]">27,058</span>
+                <span class="text-[11px] text-[#5B6B73] block mt-1">Shares traded</span>
+              </div>
+
+              <div class="bg-[#F5F6F1] p-4 rounded-xl border border-[#DDE3E3]/80">
+                <span class="text-[11px] font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">Day High / Low</span>
+                <span id="market-day-range" class="text-base sm:text-lg font-bold font-heading text-[#0B1F2A] block">$0.075 - $0.085</span>
+                <span class="text-[11px] text-[#5B6B73] block mt-1">Intraday spread</span>
+              </div>
+
+              <div class="bg-[#F5F6F1] p-4 rounded-xl border border-[#DDE3E3]/80">
+                <span class="text-[11px] font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">52-Week Range</span>
+                <span id="market-year-range" class="text-base sm:text-lg font-bold font-heading text-[#0B1F2A] block">$0.030 - $0.175</span>
+                <span class="text-[11px] text-[#5B6B73] block mt-1">Annual extremes</span>
+              </div>
+
+              <div class="bg-[#F5F6F1] p-4 rounded-xl border border-[#DDE3E3]/80">
+                <span class="text-[11px] font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">Market Capitalization</span>
+                <span id="market-cap" class="text-2xl font-bold font-heading text-[#0B1F2A]">$9.10M</span>
+                <span class="text-[11px] text-[#5B6B73] block mt-1">CAD valuation</span>
+              </div>
+
+              <div class="bg-[#F5F6F1] p-4 rounded-xl border border-[#DDE3E3]/80">
+                <span class="text-[11px] font-semibold text-[#5B6B73] uppercase tracking-wider block mb-1">Bid / Ask Spread</span>
+                <span id="market-bid-ask" class="text-base sm:text-lg font-bold font-heading text-[#0B1F2A] block">0.075 / 0.080</span>
+                <span class="text-[11px] text-[#5B6B73] block mt-1">Order book</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Stepped Chart Card -->
+          <div class="bg-white rounded-2xl p-6 border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)]">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#DDE3E3] mb-4">
+              <div>
+                <h4 class="text-lg font-bold font-heading text-[#0B1F2A]">Historical Performance Chart</h4>
+                <p class="text-xs text-[#5B6B73]">Live stepped financial line &amp; volume histogram rendered from backend</p>
+              </div>
+
+              <!-- Timeframe Selector Pills -->
+              <div class="flex items-center gap-1.5 bg-[#F5F6F1] p-1 rounded-xl border border-[#DDE3E3]">
+                <button onclick="setMarketTimeframe('1D')" id="tf-btn-1D" class="market-tf-btn px-3 py-1 rounded-lg text-xs font-semibold text-[#5B6B73] hover:text-[#0B1F2A]">1D</button>
+                <button onclick="setMarketTimeframe('5D')" id="tf-btn-5D" class="market-tf-btn px-3 py-1 rounded-lg text-xs font-bold bg-[#0B1F2A] text-[#B7E34A] shadow-sm">5D</button>
+                <button onclick="setMarketTimeframe('1M')" id="tf-btn-1M" class="market-tf-btn px-3 py-1 rounded-lg text-xs font-semibold text-[#5B6B73] hover:text-[#0B1F2A]">1M</button>
+                <button onclick="setMarketTimeframe('6M')" id="tf-btn-6M" class="market-tf-btn px-3 py-1 rounded-lg text-xs font-semibold text-[#5B6B73] hover:text-[#0B1F2A]">6M</button>
+                <button onclick="setMarketTimeframe('YTD')" id="tf-btn-YTD" class="market-tf-btn px-3 py-1 rounded-lg text-xs font-semibold text-[#5B6B73] hover:text-[#0B1F2A]">YTD</button>
+                <button onclick="setMarketTimeframe('1Y')" id="tf-btn-1Y" class="market-tf-btn px-3 py-1 rounded-lg text-xs font-semibold text-[#5B6B73] hover:text-[#0B1F2A]">1Y</button>
+              </div>
+            </div>
+
+            <!-- Dynamic SVG Chart Container -->
+            <div class="relative w-full overflow-hidden bg-[#FAFAFA] rounded-xl border border-[#DDE3E3] p-4">
+              <div id="chart-tooltip" class="absolute hidden bg-[#0B1F2A] text-white px-3 py-1.5 rounded-lg text-xs shadow-xl pointer-events-none z-10 border border-[#1F6F78]"></div>
+              <svg id="market-svg-chart" viewBox="0 0 700 250" class="w-full h-64 select-none">
+                <text x="350" y="130" text-anchor="middle" fill="#5B6B73" font-size="12">Loading market candle points...</text>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Corporate Capital Structure & Share Float Form -->
+          <div class="bg-white rounded-2xl p-6 border border-[#DDE3E3] shadow-[0_4px_20px_-2px_rgba(11,31,42,0.05)]">
+            <div class="pb-4 border-b border-[#DDE3E3] mb-5">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#1F6F78]/15 text-[#1F6F78]">Corporate Registry</span>
+              <h4 class="text-lg font-bold font-heading text-[#0B1F2A] mt-1">Capital Structure &amp; Share Float Management</h4>
+              <p class="text-xs text-[#5B6B73]">Manage company capital statistics, unrestricted treasury reserves, and insider float percentages.</p>
+            </div>
+
+            <form onsubmit="handleSaveCapitalStructure(event)" class="space-y-4 text-sm">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Issued &amp; Outstanding Shares</label>
+                  <input id="cap-shares-issued" type="text" placeholder="62.4M" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm font-semibold text-[#0B1F2A]">
+                </div>
+
+                <div>
+                  <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Cash &amp; Liquidity Reserves</label>
+                  <input id="cap-cash-position" type="text" placeholder="$1.5M" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm font-semibold text-[#0B1F2A]">
+                </div>
+
+                <div>
+                  <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Marketable Securities (NZEC)</label>
+                  <input id="cap-nzec-holdings" type="text" placeholder="1.2M" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm font-semibold text-[#0B1F2A]">
+                </div>
+
+                <div>
+                  <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Fully Diluted Total</label>
+                  <input id="cap-fully-diluted" type="text" placeholder="91.1M" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm font-semibold text-[#0B1F2A]">
+                </div>
+              </div>
+
+              <!-- Float Percentages -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div>
+                  <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Insiders &amp; Associates Float (%)</label>
+                  <input id="cap-float-insiders" type="number" min="0" max="100" placeholder="40" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm font-semibold text-[#0B1F2A]">
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Institutional Funds Float (%)</label>
+                  <input id="cap-float-funds" type="number" min="0" max="100" placeholder="40" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm font-semibold text-[#0B1F2A]">
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Public Retail Float (%)</label>
+                  <input id="cap-float-retail" type="number" min="0" max="100" placeholder="20" class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm font-semibold text-[#0B1F2A]">
+                </div>
+              </div>
+
+              <div>
+                <label class="text-xs font-semibold text-[#5B6B73] block mb-1">Float Narrative Description</label>
+                <textarea id="cap-float-narrative" rows="2" placeholder="Float structure description..." class="w-full px-3.5 py-2 border border-[#DDE3E3] rounded-xl text-sm text-[#0B1F2A]"></textarea>
+              </div>
+
+              <div class="pt-3 border-t border-[#DDE3E3] flex items-center justify-between">
+                <span id="cap-last-updated" class="text-xs text-[#5B6B73]">Last updated: Q1 2026</span>
+                <button type="submit" class="px-5 py-2 bg-[#0B1F2A] text-[#B7E34A] rounded-xl text-xs font-bold hover:bg-[#153a4e] shadow transition flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                  <span>Save Capital Structure</span>
+                </button>
+              </div>
+            </form>
           </div>
         </section>
 
@@ -1031,7 +1194,11 @@
       subscribers: [],
       projects: [],
       news: [],
-      selectedInquiry: null
+      selectedInquiry: null,
+      marketQuote: null,
+      marketCapital: null,
+      marketHistory: {},
+      currentMarketTimeframe: '5D'
     };
 
     // Helper: Auth Headers
@@ -1299,7 +1466,8 @@
         inquiries: 'Investor Inquiries & Contact Leads',
         subscribers: 'News & Press Release Subscribers',
         projects: 'Energy Projects & Assets Management',
-        news: 'Press Releases & Regulatory News'
+        news: 'Press Releases & Regulatory News',
+        market: 'TSX-V Market Performance & Capital Structure'
       };
       document.getElementById('page-title').innerText = titles[tabName] || 'CMS Dashboard';
 
@@ -1315,6 +1483,7 @@
       renderSubscribers();
       renderProjects();
       renderNews();
+      renderMarketTab();
       refreshIcons();
     }
 
@@ -1322,11 +1491,13 @@
     async function fetchAllData() {
       try {
         const headers = getAuthHeaders();
-        const [inqRes, subRes, projRes, newsRes] = await Promise.all([
+        const [inqRes, subRes, projRes, newsRes, quoteRes, capRes] = await Promise.all([
           fetch('/api/v1/enquiries', { headers }).catch(() => null),
           fetch('/api/v1/subscribers', { headers }).catch(() => null),
           fetch('/api/v1/projects', { headers }).catch(() => null),
-          fetch('/api/v1/news', { headers }).catch(() => null)
+          fetch('/api/v1/news', { headers }).catch(() => null),
+          fetch('/api/v1/market/quote').catch(() => null),
+          fetch('/api/v1/market/capital').catch(() => null)
         ]);
 
         if (inqRes && inqRes.ok) {
@@ -1344,6 +1515,14 @@
         if (newsRes && newsRes.ok) {
           const data = await newsRes.json();
           state.news = data.data || [];
+        }
+        if (quoteRes && quoteRes.ok) {
+          const data = await quoteRes.json();
+          state.marketQuote = data.data;
+        }
+        if (capRes && capRes.ok) {
+          const data = await capRes.json();
+          state.marketCapital = data.data;
         }
       } catch (e) {
         console.warn('API sync warning:', e);
@@ -1893,6 +2072,277 @@
       sedarLink.href = article.sourceUrl || 'https://www.sedarplus.ca';
 
       document.getElementById('reader-release-type').innerText = article.releaseType || 'Official Press Release';
+    }
+
+    // =========================================================================
+    // Market & Capital Functions (Live TSX-V Feed & SVG Chart Engine)
+    // =========================================================================
+    async function refreshLiveMarketData() {
+      try {
+        const res = await fetch('/api/v1/market/quote');
+        const data = await res.json();
+        if (data.success && data.data) {
+          state.marketQuote = data.data;
+          renderMarketTab();
+          showToast('Live TSX-V exchange feed refreshed');
+        }
+      } catch (e) {
+        showToast('Could not reach exchange feed', 'error');
+      }
+    }
+
+    function renderMarketTab() {
+      const q = state.marketQuote;
+      if (q) {
+        const priceEl = document.getElementById('market-price');
+        const changeEl = document.getElementById('market-change-badge');
+        const volEl = document.getElementById('market-volume');
+        const dayRangeEl = document.getElementById('market-day-range');
+        const yearRangeEl = document.getElementById('market-year-range');
+        const capEl = document.getElementById('market-cap');
+        const bidAskEl = document.getElementById('market-bid-ask');
+        const statusEl = document.getElementById('market-status-pill');
+        const tsEl = document.getElementById('market-timestamp');
+
+        if (priceEl) priceEl.innerText = `$${Number(q.price).toFixed(3)}`;
+        if (volEl) volEl.innerText = Number(q.volume).toLocaleString();
+        if (dayRangeEl) dayRangeEl.innerText = `$${Number(q.low).toFixed(3)} - $${Number(q.high).toFixed(3)}`;
+        if (yearRangeEl) yearRangeEl.innerText = `$${Number(q.yearLow).toFixed(3)} - $${Number(q.yearHigh).toFixed(3)}`;
+        if (capEl) capEl.innerText = `$${q.marketCap}`;
+        if (bidAskEl) bidAskEl.innerText = `${q.bid.toFixed(3)} / ${q.ask.toFixed(3)}`;
+        if (tsEl) tsEl.innerText = `Exchange Timestamp: ${q.timestamp} • TSX Venture Exchange`;
+
+        if (changeEl) {
+          const isPos = q.change >= 0;
+          changeEl.className = `mt-1 text-xs font-bold ${isPos ? 'text-emerald-600' : 'text-red-600'}`;
+          changeEl.innerText = `${isPos ? '+' : ''}${q.change.toFixed(3)} (${isPos ? '+' : ''}${q.changePercent.toFixed(2)}%)`;
+        }
+
+        if (statusEl) {
+          const isOpen = q.status && q.status.includes('OPEN');
+          statusEl.className = `px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${isOpen ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`;
+          statusEl.innerText = q.status;
+        }
+      }
+
+      // Populate Capital Form
+      const cap = state.marketCapital;
+      if (cap) {
+        const elShares = document.getElementById('cap-shares-issued');
+        const elCash = document.getElementById('cap-cash-position');
+        const elNzec = document.getElementById('cap-nzec-holdings');
+        const elDiluted = document.getElementById('cap-fully-diluted');
+        const elInsiders = document.getElementById('cap-float-insiders');
+        const elFunds = document.getElementById('cap-float-funds');
+        const elRetail = document.getElementById('cap-float-retail');
+        const elNarrative = document.getElementById('cap-float-narrative');
+        const elUpdated = document.getElementById('cap-last-updated');
+
+        if (elShares && !elShares.value) elShares.value = cap.sharesIssued || '62.4M';
+        if (elCash && !elCash.value) elCash.value = cap.cashPosition || '$1.5M';
+        if (elNzec && !elNzec.value) elNzec.value = cap.nzecHoldings || '1.2M';
+        if (elDiluted && !elDiluted.value) elDiluted.value = cap.fullyDiluted || '91.1M';
+        if (elInsiders && !elInsiders.value) elInsiders.value = cap.insidersPercent ?? 40;
+        if (elFunds && !elFunds.value) elFunds.value = cap.fundsPercent ?? 40;
+        if (elRetail && !elRetail.value) elRetail.value = cap.retailPercent ?? 20;
+        if (elNarrative && !elNarrative.value) elNarrative.value = cap.floatNarrative || '';
+        if (elUpdated) elUpdated.innerText = `Last updated: ${cap.updatedAt ? formatDate(cap.updatedAt) : 'Q1 2026'} by ${cap.lastUpdatedBy || 'System Admin'}`;
+      }
+
+      // Render chart for active timeframe
+      fetchAndRenderChart(state.currentMarketTimeframe || '5D');
+    }
+
+    function setMarketTimeframe(tf) {
+      state.currentMarketTimeframe = tf;
+      document.querySelectorAll('.market-tf-btn').forEach(btn => {
+        btn.className = 'market-tf-btn px-3 py-1 rounded-lg text-xs font-semibold text-[#5B6B73] hover:text-[#0B1F2A]';
+      });
+      const activeBtn = document.getElementById(`tf-btn-${tf}`);
+      if (activeBtn) {
+        activeBtn.className = 'market-tf-btn px-3 py-1 rounded-lg text-xs font-bold bg-[#0B1F2A] text-[#B7E34A] shadow-sm';
+      }
+      fetchAndRenderChart(tf);
+    }
+
+    async function fetchAndRenderChart(tf) {
+      try {
+        const res = await fetch(`/api/v1/market/history?timeframe=${tf}`);
+        const data = await res.json();
+        if (data.success && data.data && data.data.points) {
+          drawSteppedSvgChart(data.data.points);
+        }
+      } catch (err) {
+        console.warn('Chart render fallback:', err);
+      }
+    }
+
+    function drawSteppedSvgChart(points) {
+      const svg = document.getElementById('market-svg-chart');
+      if (!svg || !points || points.length === 0) return;
+
+      const svgWidth = 700;
+      const svgHeight = 250;
+      const padLeft = 45;
+      const padRight = 30;
+      const padTop = 25;
+      const padBottom = 35;
+      const chartWidth = svgWidth - padLeft - padRight;
+      const chartHeight = svgHeight - padTop - padBottom;
+
+      const prices = points.map(p => p.price);
+      const volumes = points.map(p => p.volume);
+
+      let minP = Math.min(...prices);
+      let maxP = Math.max(...prices);
+      if (minP === maxP) {
+        minP = minP * 0.9;
+        maxP = maxP * 1.1;
+      }
+      // Add slight vertical margin
+      const priceRange = (maxP - minP) || 0.01;
+      minP = Math.max(0, minP - priceRange * 0.05);
+      maxP = maxP + priceRange * 0.05;
+
+      const maxV = Math.max(...volumes) || 1;
+
+      // Coordinate mapping
+      const computed = points.map((pt, i) => {
+        const x = padLeft + (i / Math.max(1, points.length - 1)) * chartWidth;
+        const y = padTop + chartHeight - ((pt.price - minP) / (maxP - minP)) * chartHeight;
+        const volHeight = Math.min(45, (pt.volume / maxV) * 45);
+        const volY = svgHeight - padBottom - volHeight;
+        return { ...pt, x, y, volY, volHeight };
+      });
+
+      // Financial Stepped Line Path
+      let linePath = `M ${computed[0].x} ${computed[0].y}`;
+      for (let i = 1; i < computed.length; i++) {
+        const prev = computed[i - 1];
+        const curr = computed[i];
+        linePath += ` L ${curr.x} ${prev.y} L ${curr.x} ${curr.y}`;
+      }
+
+      // Stepped Area Path
+      const baseY = svgHeight - padBottom;
+      let areaPath = `M ${computed[0].x} ${baseY} L ${computed[0].x} ${computed[0].y}`;
+      for (let i = 1; i < computed.length; i++) {
+        const prev = computed[i - 1];
+        const curr = computed[i];
+        areaPath += ` L ${curr.x} ${prev.y} L ${curr.x} ${curr.y}`;
+      }
+      areaPath += ` L ${computed[computed.length - 1].x} ${baseY} Z`;
+
+      // Volume Bars
+      const barWidth = Math.max(2, (chartWidth / computed.length) * 0.7);
+      const volumeBars = computed.map(pt => `
+        <rect x="${pt.x - barWidth / 2}" y="${pt.volY}" width="${barWidth}" height="${pt.volHeight}" fill="#1F6F78" opacity="0.35" rx="1"></rect>
+      `).join('');
+
+      // Y-axis Price Grid Lines
+      const yTicks = [
+        { val: maxP, y: padTop },
+        { val: (maxP + minP) / 2, y: padTop + chartHeight / 2 },
+        { val: minP, y: padTop + chartHeight }
+      ];
+
+      const gridLines = yTicks.map(t => `
+        <line x1="${padLeft}" y1="${t.y}" x2="${svgWidth - padRight}" y2="${t.y}" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3,3" />
+        <text x="${padLeft - 8}" y="${t.y + 4}" text-anchor="end" fill="#64748B" font-size="10" font-family="monospace">$${t.val.toFixed(3)}</text>
+      `).join('');
+
+      // X-axis date labels (show ~5 points)
+      const step = Math.max(1, Math.floor(computed.length / 5));
+      const xLabels = computed.filter((_, i) => i % step === 0 || i === computed.length - 1).map(pt => `
+        <text x="${pt.x}" y="${svgHeight - 12}" text-anchor="middle" fill="#64748B" font-size="10">${escapeHtml(pt.date)}</text>
+      `).join('');
+
+      svg.innerHTML = `
+        <defs>
+          <linearGradient id="marketAreaGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1F6F78" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#1F6F78" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        ${gridLines}
+        ${volumeBars}
+        <path d="${areaPath}" fill="url(#marketAreaGradient)" />
+        <path d="${linePath}" fill="none" stroke="#1F6F78" stroke-width="2.5" stroke-linejoin="round" />
+        ${xLabels}
+      `;
+
+      // Tooltip Hover interaction
+      const tooltip = document.getElementById('chart-tooltip');
+      if (tooltip) {
+        svg.onmousemove = (e) => {
+          const rect = svg.getBoundingClientRect();
+          const clientX = e.clientX - rect.left;
+          const ratio = clientX / rect.width;
+          const svgX = ratio * svgWidth;
+
+          let nearest = computed[0];
+          let minDist = Infinity;
+          computed.forEach(pt => {
+            const dist = Math.abs(pt.x - svgX);
+            if (dist < minDist) {
+              minDist = dist;
+              nearest = pt;
+            }
+          });
+
+          tooltip.style.left = `${(nearest.x / svgWidth) * 100}%`;
+          tooltip.style.top = `${nearest.y - 35}px`;
+          tooltip.innerHTML = `
+            <div class="font-bold text-[#B7E34A]">$${nearest.price.toFixed(3)} CAD</div>
+            <div class="text-[10px] text-slate-300">${escapeHtml(nearest.date)} • Vol: ${nearest.volume.toLocaleString()}</div>
+          `;
+          tooltip.classList.remove('hidden');
+        };
+
+        svg.onmouseleave = () => {
+          tooltip.classList.add('hidden');
+        };
+      }
+    }
+
+    async function handleSaveCapitalStructure(e) {
+      e.preventDefault();
+      const sharesIssued = document.getElementById('cap-shares-issued').value.trim();
+      const cashPosition = document.getElementById('cap-cash-position').value.trim();
+      const nzecHoldings = document.getElementById('cap-nzec-holdings').value.trim();
+      const fullyDiluted = document.getElementById('cap-fully-diluted').value.trim();
+      const insidersPercent = Number(document.getElementById('cap-float-insiders').value) || 40;
+      const fundsPercent = Number(document.getElementById('cap-float-funds').value) || 40;
+      const retailPercent = Number(document.getElementById('cap-float-retail').value) || 20;
+      const floatNarrative = document.getElementById('cap-float-narrative').value.trim();
+
+      try {
+        const res = await fetch('/api/v1/market/capital', {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            sharesIssued,
+            cashPosition,
+            nzecHoldings,
+            fullyDiluted,
+            insidersPercent,
+            fundsPercent,
+            retailPercent,
+            floatNarrative
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          state.marketCapital = data.data;
+          showToast('Capital structure updated successfully!');
+          refreshCurrentTab();
+        } else {
+          showToast(data.message || 'Error saving capital data', 'error');
+        }
+      } catch (err) {
+        showToast('Network error while saving', 'error');
+      }
     }
 
     // Modal Operations
