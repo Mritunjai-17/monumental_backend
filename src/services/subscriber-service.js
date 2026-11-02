@@ -1,9 +1,11 @@
 import { SubscriberRepository } from '../repository/subscriber-repository.js';
 import { ApiError } from '../utils/api-error.js';
+import { EmailService } from './email-service.js';
 
 export class SubscriberService {
   constructor() {
     this.subscriberRepository = new SubscriberRepository();
+    this.emailService = new EmailService();
   }
 
   async getAllSubscribers(status, search) {
@@ -26,6 +28,11 @@ export class SubscriberService {
         existing.status = 'Active';
         existing.subscribedAt = new Date();
         await existing.save();
+
+        this.emailService.sendWelcomeEmail(existing.email).catch((err) => {
+          console.error('[SubscriberService] Failed to send welcome email:', err.message);
+        });
+
         return { subscriber: existing, isReactivated: true };
       }
       return { subscriber: existing, alreadySubscribed: true };
@@ -35,6 +42,10 @@ export class SubscriberService {
       email: email.toLowerCase().trim(),
       source,
       status: 'Active'
+    });
+
+    this.emailService.sendWelcomeEmail(subscriber.email).catch((err) => {
+      console.error('[SubscriberService] Failed to send welcome email:', err.message);
     });
 
     return { subscriber, created: true };

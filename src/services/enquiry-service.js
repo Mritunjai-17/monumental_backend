@@ -1,9 +1,11 @@
 import { EnquiryRepository } from '../repository/enquiry-repository.js';
 import { ApiError } from '../utils/api-error.js';
+import { EmailService } from './email-service.js';
 
 export class EnquiryService {
   constructor() {
     this.enquiryRepository = new EnquiryRepository();
+    this.emailService = new EmailService();
   }
 
   async getAllEnquiries(status, role, search) {
@@ -43,7 +45,19 @@ export class EnquiryService {
       status: 'New'
     };
 
-    return await this.enquiryRepository.create(payload);
+    const created = await this.enquiryRepository.create(payload);
+
+    // 1. Dispatch internal admin notification to the IR team
+    this.emailService.sendAdminInquiryNotification(created).catch((err) => {
+      console.error('[EnquiryService] Failed to dispatch admin inquiry notification:', err.message);
+    });
+
+    // 2. Dispatch auto-reply Thank You email to the person who submitted the form
+    this.emailService.sendThankYouEmail(created).catch((err) => {
+      console.error('[EnquiryService] Failed to dispatch thank you auto-reply:', err.message);
+    });
+
+    return created;
   }
 
   async updateStatus(id, status, notes) {

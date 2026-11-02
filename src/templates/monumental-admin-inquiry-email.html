@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!--
+  Monumental Energy | Internal notification: new investor inquiry from the website form
+  ------------------------------------------------------------------------------------
+  Send to:   info@monumental.energy (or the IR inbox)
+  Reply-To:  {{email}}   <- set this header so "Reply" goes straight to the person who wrote in
+  Subject:   New investor inquiry: {{inquiry_category}} from {{full_name}}
+
+  FIELDS (match the "Direct Investor Inquiry" form on the site)
+    {{inquiry_category}}  Prospective Investor | Current Shareholder | Investment Advisor / Broker |
+                          Financial Analyst / Research | Media / Press Inquiry | General / Other Inquiry
+    {{full_name}}         required
+    {{email}}             required
+    {{phone}}             optional -> send "Not provided" when empty
+    {{message}}           required -> HTML-escape before inserting; line breaks are preserved
+    {{submitted_at}}      e.g. "Oct 30, 2026, 5:15 PM PT"
+    {{page_url}}          page the form was submitted from
+
+  Images point at https://monumental-theta.vercel.app; swap to https://monumental.energy at launch.
+-->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+<title>New investor inquiry from {{full_name}}</title>
+<!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings><o:AllowPNG/><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+<style>table,td,div,h1,h2,h3,p,a,span{font-family:Arial,Helvetica,sans-serif !important;}</style>
+<![endif]-->
+<!--[if !mso]><!-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<!--<![endif]-->
+<style>
+  html,body{margin:0 !important;padding:0 !important;width:100% !important;}
+  *{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;}
+  table,td{mso-table-lspace:0pt !important;mso-table-rspace:0pt !important;}
+  table{border-spacing:0;}
+  img{-ms-interpolation-mode:bicubic;border:0;outline:none;text-decoration:none;}
+  a{text-decoration:none;}
+  a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;font-size:inherit !important;font-family:inherit !important;font-weight:inherit !important;line-height:inherit !important;}
+  .btn-lime:hover{background-color:#a3cf36 !important;border-color:#a3cf36 !important;}
+  @media screen and (max-width:620px){
+    .container{width:100% !important;max-width:100% !important;}
+    .px{padding-left:22px !important;padding-right:22px !important;}
+    .card-px{padding-left:18px !important;padding-right:18px !important;}
+    .h1{font-size:25px !important;line-height:31px !important;}
+    .label{width:104px !important;}
+    .stack{display:block !important;width:100% !important;}
+    .gap-top{padding-top:12px !important;padding-left:0 !important;}
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#f5f6f1;">
+
+<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">{{full_name}} ({{inquiry_category}}) sent a message through the website inquiry form.</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f5f6f1" style="background-color:#f5f6f1;">
+<tr>
+<td align="center" style="padding:0;">
+<!--[if mso]><table role="presentation" width="600" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
+<table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;margin:0 auto;">
+
+  <!-- HEADER -->
+  <tr>
+    <td class="px" bgcolor="#0b1f2a" style="background-color:#0b1f2a;padding:26px 40px;border-bottom:1px solid #1b3240;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td valign="middle"><img src="https://monumental-theta.vercel.app/images/logo.png" width="155" height="32" alt="Monumental Energy" style="display:block;width:155px;height:auto;font-family:'Space Grotesk',Arial,sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;color:#ffffff;"></td>
+          <td valign="middle" align="right" style="font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:12px;line-height:16px;font-weight:600;letter-spacing:1.44px;text-transform:uppercase;color:#b7e34a;">Website notification</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- TITLE BAND -->
+  <tr>
+    <td class="px" bgcolor="#0b1f2a" style="background-color:#0b1f2a;padding:38px 40px 36px;">
+      <p style="margin:0 0 10px;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:12px;line-height:16px;font-weight:600;letter-spacing:1.44px;text-transform:uppercase;color:#b7e34a;">New investor inquiry</p>
+      <h1 class="h1" style="margin:0 0 10px;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:30px;line-height:36px;font-weight:700;letter-spacing:-0.6px;color:#ffffff;">New inquiry from {{full_name}}</h1>
+      <p style="margin:0 0 20px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#c7d0d2;">Submitted {{submitted_at}} via monumental.energy</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;"><tr>
+        <td bgcolor="#b7e34a" style="border-radius:15px;padding:6px 16px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:13px;line-height:18px;font-weight:600;color:#0b1f2a;">{{inquiry_category}}</td>
+      </tr></table>
+    </td>
+  </tr>
+
+  <!-- CONTACT DETAILS -->
+  <tr>
+    <td class="px" style="padding:32px 40px 0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="border-collapse:separate;background-color:#ffffff;border:1px solid #dde3e3;border-radius:16px;">
+        <tr>
+          <td class="card-px" style="padding:22px 24px 8px;">
+            <p style="margin:0 0 12px;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:18px;line-height:24px;font-weight:700;color:#0b1f2a;">Contact details</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td class="label" width="140" valign="top" style="padding:15px 10px 15px 0;border-top:1px solid #dde3e3;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:11px;line-height:18px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:#1f6f78;">Inquiry type</td>
+                <td valign="top" style="padding:14px 0;border-top:1px solid #dde3e3;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:20px;color:#16232b;">{{inquiry_category}}</td>
+              </tr>
+              <tr>
+                <td class="label" width="140" valign="top" style="padding:15px 10px 15px 0;border-top:1px solid #dde3e3;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:11px;line-height:18px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:#1f6f78;">Full name</td>
+                <td valign="top" style="padding:14px 0;border-top:1px solid #dde3e3;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:20px;font-weight:600;color:#0b1f2a;">{{full_name}}</td>
+              </tr>
+              <tr>
+                <td class="label" width="140" valign="top" style="padding:15px 10px 15px 0;border-top:1px solid #dde3e3;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:11px;line-height:18px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:#1f6f78;">Email</td>
+                <td valign="top" style="padding:14px 0;border-top:1px solid #dde3e3;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:20px;font-weight:600;word-break:break-all;"><a href="mailto:{{email}}" style="color:#1f6f78;">{{email}}</a></td>
+              </tr>
+              <tr>
+                <td class="label" width="140" valign="top" style="padding:15px 10px 15px 0;border-top:1px solid #dde3e3;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:11px;line-height:18px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:#1f6f78;">Phone</td>
+                <td valign="top" style="padding:14px 0;border-top:1px solid #dde3e3;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:20px;color:#16232b;">{{phone}}</td>
+              </tr>
+              <tr>
+                <td class="label" width="140" valign="top" style="padding:15px 10px 15px 0;border-top:1px solid #dde3e3;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:11px;line-height:18px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:#1f6f78;">Submitted</td>
+                <td valign="top" style="padding:14px 0;border-top:1px solid #dde3e3;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:20px;color:#16232b;">{{submitted_at}}</td>
+              </tr>
+              <tr>
+                <td class="label" width="140" valign="top" style="padding:15px 10px 15px 0;border-top:1px solid #dde3e3;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:11px;line-height:18px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:#1f6f78;">Source page</td>
+                <td valign="top" style="padding:14px 0;border-top:1px solid #dde3e3;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:20px;word-break:break-all;"><a href="{{page_url}}" style="color:#1f6f78;">{{page_url}}</a></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- MESSAGE -->
+  <tr>
+    <td class="px" style="padding:24px 40px 0;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="border-collapse:separate;background-color:#ffffff;border:1px solid #dde3e3;border-radius:16px;">
+        <tr>
+          <td class="card-px" style="padding:22px 24px 24px;">
+            <p style="margin:0 0 14px;font-family:'Space Grotesk',Arial,Helvetica,sans-serif;font-size:18px;line-height:24px;font-weight:700;color:#0b1f2a;">Message or question</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;"><tr>
+              <td bgcolor="#f5f6f1" style="background-color:#f5f6f1;border-radius:10px;padding:18px 20px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:15px;line-height:24px;color:#16232b;white-space:pre-wrap;">{{message}}</td>
+            </tr></table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- ACTION -->
+  <tr>
+    <td class="px" style="padding:28px 40px 40px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="stack" valign="middle">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:separate;"><tr>
+              <td bgcolor="#b7e34a" style="border-radius:10px;mso-padding-alt:14px 32px;"><a class="btn-lime" href="mailto:{{email}}?subject=Re%3A%20Your%20inquiry%20to%20Monumental%20Energy" style="display:inline-block;padding:14px 32px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:600;color:#0b1f2a;background-color:#b7e34a;border:1px solid #b7e34a;border-radius:10px;">Reply by email</a></td>
+            </tr></table>
+          </td>
+          <td class="stack gap-top" valign="middle" style="padding-left:20px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:13px;line-height:19px;color:#5b6b73;">Replying to this email goes straight to {{email}}.</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td class="px" bgcolor="#07151d" style="background-color:#07151d;padding:46px 40px 46px;">
+      <img src="https://monumental-theta.vercel.app/images/logo.png" width="130" height="27" alt="Monumental Energy" style="display:block;width:130px;height:auto;font-family:'Space Grotesk',Arial,sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:#ffffff;">
+      <p style="margin:24px 0 16px;font-family:Inter,Arial,Helvetica,sans-serif;font-size:12px;line-height:19px;color:#8e9aa0;">This notification was sent automatically by the investor inquiry form on monumental.energy. It contains personal information submitted by a member of the public. Handle it in line with the company&rsquo;s Privacy Policy and keep it within the investor relations team.</p>
+      <p style="margin:0;font-family:Inter,Arial,Helvetica,sans-serif;font-size:11px;line-height:17px;color:#76848b;">Monumental Energy Corp. &nbsp;&middot;&nbsp; Vancouver, BC &nbsp;&middot;&nbsp; TSX-V: MNRG</p>
+    </td>
+  </tr>
+
+  <tr><td height="24" style="height:24px;font-size:0;line-height:0;">&nbsp;</td></tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td>
+</tr>
+</table>
+</body>
+</html>
+

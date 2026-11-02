@@ -3,11 +3,13 @@ import { EnquiryService } from './enquiry-service.js';
 import { SubscriberService } from './subscriber-service.js';
 import { ProjectService } from './project-service.js';
 import { NewsService } from './news-service.js';
+import { EmailService } from './email-service.js';
 
 export {
   AuthService,
   EnquiryService,
   SubscriberService,
   ProjectService,
-  NewsService
+  NewsService,
+  EmailService
 };
