@@ -39,6 +39,11 @@ export class NewsService {
       data.date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     }
 
+    if (!data.publishedAt) {
+      const parsedDate = new Date(data.date);
+      data.publishedAt = !isNaN(parsedDate.getTime()) ? parsedDate : new Date();
+    }
+
     const existing = await this.newsRepository.findBySlug(data.slug);
     if (existing) {
       data.slug = `${data.slug}-${Date.now().toString().slice(-4)}`;
@@ -48,6 +53,12 @@ export class NewsService {
   }
 
   async updateNews(id, updateData) {
+    if (updateData.date && !updateData.publishedAt) {
+      const parsedDate = new Date(updateData.date);
+      if (!isNaN(parsedDate.getTime())) {
+        updateData.publishedAt = parsedDate;
+      }
+    }
     const updated = await this.newsRepository.updateById(id, updateData);
     if (!updated) {
       throw new ApiError(`News with id ${id} not found`, 404);
